@@ -1,0 +1,125 @@
+<script src="src/ccwc-sensortag-visualizer.js"></script>
+<script>
+    CCWCSensorTagVisualizer.default.prototype.owner = (document._currentScript || document.currentScript).ownerDocument;
+    document.registerElement('ccwc-sensortag-visualizer', CCWCSensorTagVisualizer.default);
+</script>
+
+<template id="style">
+    <style>
+        :host {
+            display: flex;
+            flex-wrap: wrap;
+            height: 100%;
+            font-family: 'Roboto', sans-serif;
+            width: 100%;
+        }
+
+        :host .group {
+            background-color: #dadada;
+            padding: 25px;
+            margin: 15px;
+            width: 200px;
+            height: 200px;
+            display: inline-block;
+            opacity: 0.2;
+        }
+
+        :host .group.device ul {
+            list-style: none;
+            font-size: 9px;
+            padding: 0;
+        }
+
+        :host .group.enabled {
+            opacity: 1;
+        }
+
+        :host .group.enabled.active h4 {
+            color: #006600;
+        }
+
+        :host .group .item {
+            font-size: 10px;
+            background: linear-gradient(to right,
+            rgba(0,0,0,0) 0%,
+            rgba(0,0,0,0) 49.9%,
+            rgba(0,0,0,.25) 50%,
+            rgba(0,0,0,0) 50.9%,
+            rgba(0,0,0,0) 100%);
+        }
+
+        :host .group .scale-left {
+            width: 50%;
+            height: 2px;
+            display: inline-block;
+            background-color: #ff0000;
+        }
+
+        :host .group .scale-right {
+            width: 50%;
+            height: 2px;
+            display: inline-block;
+            background-color: #fcff5e;
+        }
+
+        :host .group.button .button {
+            width: 50px;
+            height: 50px;
+            border-radius: 10px;
+            background-color: #660000;
+        }
+
+        :host .group.button .container {
+            display: inline-block;
+            margin-right: 25px;
+        }
+
+        :host .group.button .button.on {
+            background-color: #718c00;
+        }
+
+        :host .group .bar {
+            background-color: #718c00;
+            height: 15px;
+            left: 50%;
+            position: relative;
+            display: inline-block;
+        }
+    </style>
+</template>
+
+<template id="buttons">
+    <div class="button group">
+        <h4 class="header"></h4>
+        <div class="container">
+            <label class="left label">Left <span class="value"></span></label>
+            <div class="left button"></div>
+        </div>
+
+        <div class="container">
+            <label class="right label">Right<span class="value"></span></label>
+            <div class="right button"></div>
+        </div>
+    </div>
+</template>
+
+<template id="sensor">
+    <div class="group">
+        <h4 class="header"></h4>
+        <div class="item">
+            <label class="x label">X <span class="value"></span></label>
+            <br />
+            <div class="x bar"></div></div>
+        <div class="item">
+            <label class="y label">Y <span class="value"></span></label>
+            <br />
+            <div class="y bar"></div>
+        </div>
+        <div class="item">
+            <label class="z label">Z <span class="value"></span></label>
+            <br />
+            <div class="z bar"></div>
+        </div>
+        <div class="scale-left"></div><div class="scale-right"></div>
+    </div>
+</template>

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <link rel="import" href="../ccwc-sensortag-visualizer.html">
+    <style>
+        button {
+            font-size: larger;
+            float: right;
+        }
+    </style>
+</head>
+<body>
+    <!--<ccwc-sensortag-visualizer simulate></ccwc-sensortag-visualizer>-->
+    <ccwc-sensortag-visualizer></ccwc-sensortag-visualizer>
+    <button onclick="onClick()">Connect to SensorTag</button>
+
+    <script>
+        function onClick() {
+            document.querySelector('ccwc-sensortag-visualizer').connect();
+        }
+    </script>
+</body>
+</html>
