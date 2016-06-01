@@ -1,5 +1,14 @@
+import SampleData from '../../recording.es6';
+
 export default class {
     constructor() {
+        /**
+         * index of current sensor snapshot in sim mode
+         * @type {number}
+         * @private
+         */
+        this._simIndex = 0;
+
         /**
          * socket connection
          * @type {null}
@@ -105,37 +114,34 @@ export default class {
      * get simulated sensor data object
      */
     getSimulatedSensors() {
-        return {
+        var sim = {
             connected: true,
             device: {
                 systemid: 'xxxxx',
                 firmware: 'xxxxx',
                 manufacturer: 'xxxxx'
-            },
-            sensors: {
-                accelerometer: {
-                    active: true,
-                    enabled: true,
-                    x: String(3 - Math.random() * 6),
-                    y: String(3 - Math.random() * 6),
-                    z: String(3 - Math.random() * 6)
-                },
-                magnetometer: {
-                    active: true,
-                    enabled: true,
-                    x: String(3 - Math.random() * 6),
-                    y: String(3 - Math.random() * 6),
-                    z: String(3 - Math.random() * 6)
-                },
-                gyroscope: {
-                    active: true,
-                    enabled: true,
-                    x: String(3 - Math.random() * 6),
-                    y: String(3 - Math.random() * 6),
-                    z: String(3 - Math.random() * 6)
-                }
             }
+        };
+        var accelerometer = SampleData.samples[this._simIndex].accelerometer;
+        var gyroscope = SampleData.samples[this._simIndex].gyroscope;
+
+        sim.sensors = {
+            accelerometer: {
+                x: accelerometer.x * 10,
+                y: accelerometer.y * 10,
+                z: accelerometer.z * 10
+            },
+            gyroscope: {
+                x: gyroscope.x / 10,
+                y: gyroscope.y / 10,
+                z: gyroscope.z / 10
+            }
+        };
+        this._simIndex ++;
+        if (this._simIndex >= SampleData.samples.length) {
+            this._simIndex = 0;
         }
+        return sim;
     }
 
     /**

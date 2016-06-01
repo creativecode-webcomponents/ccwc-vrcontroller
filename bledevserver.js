@@ -8,6 +8,8 @@ var async = require('async');
 var WebSocketServer = require('websocket').server;
 var http = require('http');
 var connections = [];
+var recording = [];
+var fs = require('fs');
 
 var controllerData = {
     connected: false,
@@ -22,6 +24,7 @@ function connect() {
 
         sensorTag.on('disconnect', function() {
             console.log('disconnected');
+            //fs.writeFileSync('recording.json', JSON.stringify( recording ));
             controllerData.connected = false;
             sendSensorTagUpdate();
         });
@@ -192,7 +195,12 @@ wsServer.on('request', function(request) {
 });
 
 function sendSensorTagUpdate() {
+    if (controllerData.sensors.accelerometer && controllerData.sensors.gyroscope) {
+       // recording.push(JSON.parse(JSON.stringify(controllerData.sensors)));
+    }
     for (var c in connections) {
         connections[c].sendUTF(JSON.stringify(controllerData));
     }
 }
+
+//connect();

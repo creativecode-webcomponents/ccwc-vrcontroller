@@ -1,4 +1,708 @@
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.CCWCSensorTagVisualizer = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+        value: true
+});
+exports.default = {
+        samples: [{
+                "accelerometer": { "enabled": true },
+                "magnetometer": { "enabled": true },
+                "gyroscope": { "enabled": true }
+        }, {
+                "accelerometer": { "enabled": true },
+                "magnetometer": { "enabled": true },
+                "gyroscope": { "enabled": true },
+                "buttons": { "enabled": true }
+        }, {
+                "accelerometer": { "enabled": true },
+                "magnetometer": { "enabled": true },
+                "gyroscope": { "enabled": true },
+                "buttons": { "enabled": true, "active": true }
+        }, {
+                "accelerometer": { "enabled": true },
+                "magnetometer": { "enabled": true },
+                "gyroscope": { "enabled": true, "active": true },
+                "buttons": { "enabled": true, "active": true }
+        }, {
+                "accelerometer": { "enabled": true, "active": true },
+                "magnetometer": { "enabled": true },
+                "gyroscope": { "enabled": true, "active": true },
+                "buttons": { "enabled": true, "active": true }
+        }, {
+                "accelerometer": { "enabled": true, "active": true },
+                "magnetometer": { "enabled": true },
+                "gyroscope": { "enabled": true, "active": true, "x": "-3.0", "y": "0.8", "z": "-2.2" },
+                "buttons": { "enabled": true, "active": true }
+        }, {
+                "accelerometer": { "enabled": true, "active": true, "x": "0.4", "y": "0.6", "z": "3.9" },
+                "magnetometer": { "enabled": true },
+                "gyroscope": { "enabled": true, "active": true, "x": "-3.0", "y": "0.8", "z": "-2.2" },
+                "buttons": { "enabled": true, "active": true }
+        }, {
+                "accelerometer": { "enabled": true, "active": true, "x": "0.3", "y": "0.6", "z": "3.9" },
+                "magnetometer": { "enabled": true },
+                "gyroscope": { "enabled": true, "active": true, "x": "-3.0", "y": "0.8", "z": "-2.2" },
+                "buttons": { "enabled": true, "active": true }
+        }, {
+                "accelerometer": { "enabled": true, "active": true, "x": "0.3", "y": "0.6", "z": "3.9" },
+                "magnetometer": { "enabled": true, "active": true },
+                "gyroscope": { "enabled": true, "active": true, "x": "-3.0", "y": "0.8", "z": "-2.2" },
+                "buttons": { "enabled": true, "active": true }
+        }, {
+                "accelerometer": { "enabled": true, "active": true, "x": "0.3", "y": "0.6", "z": "3.9" },
+                "magnetometer": { "enabled": true, "active": true, "x": "-35.9", "y": "3.2", "z": "50.4" },
+                "gyroscope": { "enabled": true, "active": true, "x": "-3.0", "y": "0.8", "z": "-2.2" },
+                "buttons": { "enabled": true, "active": true }
+        }, {
+                "accelerometer": { "enabled": true, "active": true, "x": "0.4", "y": "0.6", "z": "3.9" },
+                "magnetometer": { "enabled": true, "active": true, "x": "-35.9", "y": "3.2", "z": "50.4" },
+                "gyroscope": { "enabled": true, "active": true, "x": "-3.0", "y": "0.8", "z": "-2.2" },
+                "buttons": { "enabled": true, "active": true }
+        }, {
+                "accelerometer": { "enabled": true, "active": true, "x": "0.4", "y": "0.6", "z": "3.9" },
+                "magnetometer": { "enabled": true, "active": true, "x": "-36.0", "y": "3.2", "z": "53.0" },
+                "gyroscope": { "enabled": true, "active": true, "x": "-3.0", "y": "0.8", "z": "-2.2" },
+                "buttons": { "enabled": true, "active": true }
+        }, {
+                "accelerometer": { "enabled": true, "active": true, "x": "0.4", "y": "0.6", "z": "3.9" },
+                "magnetometer": { "enabled": true, "active": true, "x": "-36.0", "y": "3.2", "z": "53.0" },
+                "gyroscope": { "enabled": true, "active": true, "x": "-3.0", "y": "0.8", "z": "-2.2" },
+                "buttons": { "enabled": true, "active": true }
+        }, {
+                "accelerometer": { "enabled": true, "active": true, "x": "0.4", "y": "0.6", "z": "3.9" },
+                "magnetometer": { "enabled": true, "active": true, "x": "-35.7", "y": "3.0", "z": "51.4" },
+                "gyroscope": { "enabled": true, "active": true, "x": "-3.0", "y": "0.8", "z": "-2.2" },
+                "buttons": { "enabled": true, "active": true }
+        }, {
+                "accelerometer": { "enabled": true, "active": true, "x": "0.1", "y": "0.3", "z": "4.1" },
+                "magnetometer": { "enabled": true, "active": true, "x": "-35.7", "y": "3.0", "z": "51.4" },
+                "gyroscope": { "enabled": true, "active": true, "x": "-3.0", "y": "0.8", "z": "-2.2" },
+                "buttons": { "enabled": true, "active": true }
+        }, {
+                "accelerometer": { "enabled": true, "active": true, "x": "0.1", "y": "0.3", "z": "4.1" },
+                "magnetometer": { "enabled": true, "active": true, "x": "-35.7", "y": "3.0", "z": "51.4" },
+                "gyroscope": { "enabled": true, "active": true, "x": "18.8", "y": "10.5", "z": "-128.0" },
+                "buttons": { "enabled": true, "active": true }
+        }, {
+                "accelerometer": { "enabled": true, "active": true, "x": "0.1", "y": "0.3", "z": "4.1" },
+                "magnetometer": { "enabled": true, "active": true, "x": "-34.2", "y": "2.2", "z": "53.0" },
+                "gyroscope": { "enabled": true, "active": true, "x": "18.8", "y": "10.5", "z": "-128.0" },
+                "buttons": { "enabled": true, "active": true }
+        }, {
+                "accelerometer": { "enabled": true, "active": true, "x": "0.1", "y": "0.6", "z": "3.8" },
+                "magnetometer": { "enabled": true, "active": true, "x": "-34.2", "y": "2.2", "z": "53.0" },
+                "gyroscope": { "enabled": true, "active": true, "x": "18.8", "y": "10.5", "z": "-128.0" },
+                "buttons": { "enabled": true, "active": true }
+        }, {
+                "accelerometer": { "enabled": true, "active": true, "x": "0.1", "y": "0.6", "z": "3.8" },
+                "magnetometer": { "enabled": true, "active": true, "x": "-31.8", "y": "1.3", "z": "51.6" },
+                "gyroscope": { "enabled": true, "active": true, "x": "18.8", "y": "10.5", "z": "-128.0" },
+                "buttons": { "enabled": true, "active": true }
+        }, {
+                "accelerometer": { "enabled": true, "active": true, "x": "0.7", "y": "0.7", "z": "3.8" },
+                "magnetometer": { "enabled": true, "active": true, "x": "-31.8", "y": "1.3", "z": "51.6" },
+                "gyroscope": { "enabled": true, "active": true, "x": "18.8", "y": "10.5", "z": "-128.0" },
+                "buttons": { "enabled": true, "active": true }
+        }, {
+                "accelerometer": { "enabled": true, "active": true, "x": "0.7", "y": "0.7", "z": "3.8" },
+                "magnetometer": { "enabled": true, "active": true, "x": "-30.5", "y": "1.2", "z": "56.3" },
+                "gyroscope": { "enabled": true, "active": true, "x": "18.8", "y": "10.5", "z": "-128.0" },
+                "buttons": { "enabled": true, "active": true }
+        }, {
+                "accelerometer": { "enabled": true, "active": true, "x": "0.9", "y": "0.9", "z": "3.8" },
+                "magnetometer": { "enabled": true, "active": true, "x": "-30.5", "y": "1.2", "z": "56.3" },
+                "gyroscope": { "enabled": true, "active": true, "x": "18.8", "y": "10.5", "z": "-128.0" },
+                "buttons": { "enabled": true, "active": true }
+        }, {
+                "accelerometer": { "enabled": true, "active": true, "x": "0.9", "y": "0.9", "z": "3.8" },
+                "magnetometer": { "enabled": true, "active": true, "x": "-30.1", "y": "1.4", "z": "57.2" },
+                "gyroscope": { "enabled": true, "active": true, "x": "18.8", "y": "10.5", "z": "-128.0" },
+                "buttons": { "enabled": true, "active": true }
+        }, {
+                "accelerometer": { "enabled": true, "active": true, "x": "0.9", "y": "0.9", "z": "3.8" },
+                "magnetometer": { "enabled": true, "active": true, "x": "-30.1", "y": "1.4", "z": "57.2" },
+                "gyroscope": { "enabled": true, "active": true, "x": "18.8", "y": "10.5", "z": "-128.0" },
+                "buttons": { "enabled": true, "active": true }
+        }, {
+                "accelerometer": { "enabled": true, "active": true, "x": "0.9", "y": "0.9", "z": "3.8" },
+                "magnetometer": { "enabled": true, "active": true, "x": "-30.3", "y": "1.4", "z": "58.7" },
+                "gyroscope": { "enabled": true, "active": true, "x": "18.8", "y": "10.5", "z": "-128.0" },
+                "buttons": { "enabled": true, "active": true }
+        }, {
+                "accelerometer": { "enabled": true, "active": true, "x": "0.9", "y": "0.8", "z": "3.9" },
+                "magnetometer": { "enabled": true, "active": true, "x": "-30.3", "y": "1.4", "z": "58.7" },
+                "gyroscope": { "enabled": true, "active": true, "x": "18.8", "y": "10.5", "z": "-128.0" },
+                "buttons": { "enabled": true, "active": true }
+        }, {
+                "accelerometer": { "enabled": true, "active": true, "x": "0.9", "y": "0.8", "z": "3.9" },
+                "magnetometer": { "enabled": true, "active": true, "x": "-30.3", "y": "1.4", "z": "58.7" },
+                "gyroscope": { "enabled": true, "active": true, "x": "-26.2", "y": "15.1", "z": "86.2" },
+                "buttons": { "enabled": true, "active": true }
+        }, {
+                "accelerometer": { "enabled": true, "active": true, "x": "0.9", "y": "0.8", "z": "3.9" },
+                "magnetometer": { "enabled": true, "active": true, "x": "-31.6", "y": "1.3", "z": "59.1" },
+                "gyroscope": { "enabled": true, "active": true, "x": "-26.2", "y": "15.1", "z": "86.2" },
+                "buttons": { "enabled": true, "active": true }
+        }, {
+                "accelerometer": { "enabled": true, "active": true, "x": "0.4", "y": "0.3", "z": "3.9" },
+                "magnetometer": { "enabled": true, "active": true, "x": "-31.6", "y": "1.3", "z": "59.1" },
+                "gyroscope": { "enabled": true, "active": true, "x": "-26.2", "y": "15.1", "z": "86.2" },
+                "buttons": { "enabled": true, "active": true }
+        }, {
+                "accelerometer": { "enabled": true, "active": true, "x": "0.4", "y": "0.3", "z": "3.9" },
+                "magnetometer": { "enabled": true, "active": true, "x": "-32.5", "y": "1.3", "z": "48.0" },
+                "gyroscope": { "enabled": true, "active": true, "x": "-26.2", "y": "15.1", "z": "86.2" },
+                "buttons": { "enabled": true, "active": true }
+        }, {
+                "accelerometer": { "enabled": true, "active": true, "x": "0.3", "y": "-0.1", "z": "3.9" },
+                "magnetometer": { "enabled": true, "active": true, "x": "-32.5", "y": "1.3", "z": "48.0" },
+                "gyroscope": { "enabled": true, "active": true, "x": "-26.2", "y": "15.1", "z": "86.2" },
+                "buttons": { "enabled": true, "active": true }
+        }, {
+                "accelerometer": { "enabled": true, "active": true, "x": "0.3", "y": "-0.1", "z": "3.9" },
+                "magnetometer": { "enabled": true, "active": true, "x": "-32.8", "y": "0.9", "z": "52.9" },
+                "gyroscope": { "enabled": true, "active": true, "x": "-26.2", "y": "15.1", "z": "86.2" },
+                "buttons": { "enabled": true, "active": true }
+        }, {
+                "accelerometer": { "enabled": true, "active": true, "x": "-0.3", "y": "-0.4", "z": "3.8" },
+                "magnetometer": { "enabled": true, "active": true, "x": "-32.8", "y": "0.9", "z": "52.9" },
+                "gyroscope": { "enabled": true, "active": true, "x": "-26.2", "y": "15.1", "z": "86.2" },
+                "buttons": { "enabled": true, "active": true }
+        }, {
+                "accelerometer": { "enabled": true, "active": true, "x": "-0.3", "y": "-0.4", "z": "3.8" },
+                "magnetometer": { "enabled": true, "active": true, "x": "-33.7", "y": "1.3", "z": "51.4" },
+                "gyroscope": { "enabled": true, "active": true, "x": "-26.2", "y": "15.1", "z": "86.2" },
+                "buttons": { "enabled": true, "active": true }
+        }, {
+                "accelerometer": { "enabled": true, "active": true, "x": "-0.4", "y": "-0.4", "z": "3.8" },
+                "magnetometer": { "enabled": true, "active": true, "x": "-33.7", "y": "1.3", "z": "51.4" },
+                "gyroscope": { "enabled": true, "active": true, "x": "-26.2", "y": "15.1", "z": "86.2" },
+                "buttons": { "enabled": true, "active": true }
+        }, {
+                "accelerometer": { "enabled": true, "active": true, "x": "-0.4", "y": "-0.4", "z": "3.8" },
+                "magnetometer": { "enabled": true, "active": true, "x": "-34.7", "y": "2.3", "z": "52.5" },
+                "gyroscope": { "enabled": true, "active": true, "x": "-26.2", "y": "15.1", "z": "86.2" },
+                "buttons": { "enabled": true, "active": true }
+        }, {
+                "accelerometer": { "enabled": true, "active": true, "x": "-1.9", "y": "-0.3", "z": "3.2" },
+                "magnetometer": { "enabled": true, "active": true, "x": "-34.7", "y": "2.3", "z": "52.5" },
+                "gyroscope": { "enabled": true, "active": true, "x": "-26.2", "y": "15.1", "z": "86.2" },
+                "buttons": { "enabled": true, "active": true }
+        }, {
+                "accelerometer": { "enabled": true, "active": true, "x": "-1.9", "y": "-0.3", "z": "3.2" },
+                "magnetometer": { "enabled": true, "active": true, "x": "-34.7", "y": "2.3", "z": "52.5" },
+                "gyroscope": { "enabled": true, "active": true, "x": "11.9", "y": "-74.1", "z": "-137.5" },
+                "buttons": { "enabled": true, "active": true }
+        }, {
+                "accelerometer": { "enabled": true, "active": true, "x": "-1.9", "y": "-0.3", "z": "3.2" },
+                "magnetometer": { "enabled": true, "active": true, "x": "-35.8", "y": "2.6", "z": "38.1" },
+                "gyroscope": { "enabled": true, "active": true, "x": "11.9", "y": "-74.1", "z": "-137.5" },
+                "buttons": { "enabled": true, "active": true }
+        }, {
+                "accelerometer": { "enabled": true, "active": true, "x": "0.3", "y": "0.9", "z": "4.9" },
+                "magnetometer": { "enabled": true, "active": true, "x": "-35.8", "y": "2.6", "z": "38.1" },
+                "gyroscope": { "enabled": true, "active": true, "x": "11.9", "y": "-74.1", "z": "-137.5" },
+                "buttons": { "enabled": true, "active": true }
+        }, {
+                "accelerometer": { "enabled": true, "active": true, "x": "0.3", "y": "0.9", "z": "4.9" },
+                "magnetometer": { "enabled": true, "active": true, "x": "-35.3", "y": "1.0", "z": "45.0" },
+                "gyroscope": { "enabled": true, "active": true, "x": "11.9", "y": "-74.1", "z": "-137.5" },
+                "buttons": { "enabled": true, "active": true }
+        }, {
+                "accelerometer": { "enabled": true, "active": true, "x": "-0.9", "y": "0.1", "z": "4.6" },
+                "magnetometer": { "enabled": true, "active": true, "x": "-35.3", "y": "1.0", "z": "45.0" },
+                "gyroscope": { "enabled": true, "active": true, "x": "11.9", "y": "-74.1", "z": "-137.5" },
+                "buttons": { "enabled": true, "active": true }
+        }, {
+                "accelerometer": { "enabled": true, "active": true, "x": "-0.9", "y": "0.1", "z": "4.6" },
+                "magnetometer": { "enabled": true, "active": true, "x": "-30.5", "y": "-0.9", "z": "50.4" },
+                "gyroscope": { "enabled": true, "active": true, "x": "11.9", "y": "-74.1", "z": "-137.5" },
+                "buttons": { "enabled": true, "active": true }
+        }, {
+                "accelerometer": { "enabled": true, "active": true, "x": "-0.3", "y": "-2.0", "z": "3.0" },
+                "magnetometer": { "enabled": true, "active": true, "x": "-30.5", "y": "-0.9", "z": "50.4" },
+                "gyroscope": { "enabled": true, "active": true, "x": "11.9", "y": "-74.1", "z": "-137.5" },
+                "buttons": { "enabled": true, "active": true }
+        }, {
+                "accelerometer": { "enabled": true, "active": true, "x": "-0.3", "y": "-2.0", "z": "3.0" },
+                "magnetometer": { "enabled": true, "active": true, "x": "-23.9", "y": "-1.7", "z": "50.6" },
+                "gyroscope": { "enabled": true, "active": true, "x": "11.9", "y": "-74.1", "z": "-137.5" },
+                "buttons": { "enabled": true, "active": true }
+        }, {
+                "accelerometer": { "enabled": true, "active": true, "x": "-0.1", "y": "-3.6", "z": "1.7" },
+                "magnetometer": { "enabled": true, "active": true, "x": "-23.9", "y": "-1.7", "z": "50.6" },
+                "gyroscope": { "enabled": true, "active": true, "x": "11.9", "y": "-74.1", "z": "-137.5" },
+                "buttons": { "enabled": true, "active": true }
+        }, {
+                "accelerometer": { "enabled": true, "active": true, "x": "-0.1", "y": "-3.6", "z": "1.7" },
+                "magnetometer": { "enabled": true, "active": true, "x": "-20.4", "y": "-1.8", "z": "48.0" },
+                "gyroscope": { "enabled": true, "active": true, "x": "11.9", "y": "-74.1", "z": "-137.5" },
+                "buttons": { "enabled": true, "active": true }
+        }, {
+                "accelerometer": { "enabled": true, "active": true, "x": "0.8", "y": "-3.7", "z": "0.3" },
+                "magnetometer": { "enabled": true, "active": true, "x": "-20.4", "y": "-1.8", "z": "48.0" },
+                "gyroscope": { "enabled": true, "active": true, "x": "11.9", "y": "-74.1", "z": "-137.5" },
+                "buttons": { "enabled": true, "active": true }
+        }, {
+                "accelerometer": { "enabled": true, "active": true, "x": "0.8", "y": "-3.7", "z": "0.3" },
+                "magnetometer": { "enabled": true, "active": true, "x": "-20.4", "y": "-1.8", "z": "48.0" },
+                "gyroscope": { "enabled": true, "active": true, "x": "3.3", "y": "2.2", "z": "4.3" },
+                "buttons": { "enabled": true, "active": true }
+        }, {
+                "accelerometer": { "enabled": true, "active": true, "x": "0.8", "y": "-3.7", "z": "0.3" },
+                "magnetometer": { "enabled": true, "active": true, "x": "-19.4", "y": "-1.3", "z": "41.8" },
+                "gyroscope": { "enabled": true, "active": true, "x": "3.3", "y": "2.2", "z": "4.3" },
+                "buttons": { "enabled": true, "active": true }
+        }, {
+                "accelerometer": { "enabled": true, "active": true, "x": "0.8", "y": "-3.4", "z": "-0.6" },
+                "magnetometer": { "enabled": true, "active": true, "x": "-19.4", "y": "-1.3", "z": "41.8" },
+                "gyroscope": { "enabled": true, "active": true, "x": "3.3", "y": "2.2", "z": "4.3" },
+                "buttons": { "enabled": true, "active": true }
+        }, {
+                "accelerometer": { "enabled": true, "active": true, "x": "0.8", "y": "-3.4", "z": "-0.6" },
+                "magnetometer": { "enabled": true, "active": true, "x": "-19.3", "y": "-1.3", "z": "43.7" },
+                "gyroscope": { "enabled": true, "active": true, "x": "3.3", "y": "2.2", "z": "4.3" },
+                "buttons": { "enabled": true, "active": true }
+        }, {
+                "accelerometer": { "enabled": true, "active": true, "x": "-0.1", "y": "-3.6", "z": "1.2" },
+                "magnetometer": { "enabled": true, "active": true, "x": "-19.3", "y": "-1.3", "z": "43.7" },
+                "gyroscope": { "enabled": true, "active": true, "x": "3.3", "y": "2.2", "z": "4.3" },
+                "buttons": { "enabled": true, "active": true }
+        }, {
+                "accelerometer": { "enabled": true, "active": true, "x": "-0.1", "y": "-3.6", "z": "1.2" },
+                "magnetometer": { "enabled": true, "active": true, "x": "-21.2", "y": "-2.7", "z": "52.2" },
+                "gyroscope": { "enabled": true, "active": true, "x": "3.3", "y": "2.2", "z": "4.3" },
+                "buttons": { "enabled": true, "active": true }
+        }, {
+                "accelerometer": { "enabled": true, "active": true, "x": "-0.4", "y": "-3.1", "z": "3.1" },
+                "magnetometer": { "enabled": true, "active": true, "x": "-21.2", "y": "-2.7", "z": "52.2" },
+                "gyroscope": { "enabled": true, "active": true, "x": "3.3", "y": "2.2", "z": "4.3" },
+                "buttons": { "enabled": true, "active": true }
+        }, {
+                "accelerometer": { "enabled": true, "active": true, "x": "-0.4", "y": "-3.1", "z": "3.1" },
+                "magnetometer": { "enabled": true, "active": true, "x": "-26.1", "y": "-2.4", "z": "54.8" },
+                "gyroscope": { "enabled": true, "active": true, "x": "3.3", "y": "2.2", "z": "4.3" },
+                "buttons": { "enabled": true, "active": true }
+        }, {
+                "accelerometer": { "enabled": true, "active": true, "x": "-0.8", "y": "-1.6", "z": "3.8" },
+                "magnetometer": { "enabled": true, "active": true, "x": "-26.1", "y": "-2.4", "z": "54.8" },
+                "gyroscope": { "enabled": true, "active": true, "x": "3.3", "y": "2.2", "z": "4.3" },
+                "buttons": { "enabled": true, "active": true }
+        }, {
+                "accelerometer": { "enabled": true, "active": true, "x": "-0.8", "y": "-1.6", "z": "3.8" },
+                "magnetometer": { "enabled": true, "active": true, "x": "-29.1", "y": "-2.1", "z": "46.6" },
+                "gyroscope": { "enabled": true, "active": true, "x": "3.3", "y": "2.2", "z": "4.3" },
+                "buttons": { "enabled": true, "active": true }
+        }, {
+                "accelerometer": { "enabled": true, "active": true, "x": "-0.8", "y": "-0.5", "z": "3.9" },
+                "magnetometer": { "enabled": true, "active": true, "x": "-29.1", "y": "-2.1", "z": "46.6" },
+                "gyroscope": { "enabled": true, "active": true, "x": "3.3", "y": "2.2", "z": "4.3" },
+                "buttons": { "enabled": true, "active": true }
+        }, {
+                "accelerometer": { "enabled": true, "active": true, "x": "-0.8", "y": "-0.5", "z": "3.9" },
+                "magnetometer": { "enabled": true, "active": true, "x": "-29.1", "y": "-2.1", "z": "46.6" },
+                "gyroscope": { "enabled": true, "active": true, "x": "-4.3", "y": "-29.2", "z": "7.7" },
+                "buttons": { "enabled": true, "active": true }
+        }, {
+                "accelerometer": { "enabled": true, "active": true, "x": "-0.8", "y": "-0.5", "z": "3.9" },
+                "magnetometer": { "enabled": true, "active": true, "x": "-31.3", "y": "-1.7", "z": "47.7" },
+                "gyroscope": { "enabled": true, "active": true, "x": "-4.3", "y": "-29.2", "z": "7.7" },
+                "buttons": { "enabled": true, "active": true }
+        }, {
+                "accelerometer": { "enabled": true, "active": true, "x": "-0.9", "y": "0.0", "z": "3.6" },
+                "magnetometer": { "enabled": true, "active": true, "x": "-31.3", "y": "-1.7", "z": "47.7" },
+                "gyroscope": { "enabled": true, "active": true, "x": "-4.3", "y": "-29.2", "z": "7.7" },
+                "buttons": { "enabled": true, "active": true }
+        }, {
+                "accelerometer": { "enabled": true, "active": true, "x": "-0.9", "y": "0.0", "z": "3.6" },
+                "magnetometer": { "enabled": true, "active": true, "x": "-32.4", "y": "-1.2", "z": "50.7" },
+                "gyroscope": { "enabled": true, "active": true, "x": "-4.3", "y": "-29.2", "z": "7.7" },
+                "buttons": { "enabled": true, "active": true }
+        }, {
+                "accelerometer": { "enabled": true, "active": true, "x": "-0.8", "y": "0.6", "z": "4.5" },
+                "magnetometer": { "enabled": true, "active": true, "x": "-32.4", "y": "-1.2", "z": "50.7" },
+                "gyroscope": { "enabled": true, "active": true, "x": "-4.3", "y": "-29.2", "z": "7.7" },
+                "buttons": { "enabled": true, "active": true }
+        }, {
+                "accelerometer": { "enabled": true, "active": true, "x": "-0.8", "y": "0.6", "z": "4.5" },
+                "magnetometer": { "enabled": true, "active": true, "x": "-32.4", "y": "-1.1", "z": "47.9" },
+                "gyroscope": { "enabled": true, "active": true, "x": "-4.3", "y": "-29.2", "z": "7.7" },
+                "buttons": { "enabled": true, "active": true }
+        }, {
+                "accelerometer": { "enabled": true, "active": true, "x": "-0.3", "y": "0.1", "z": "3.8" },
+                "magnetometer": { "enabled": true, "active": true, "x": "-32.4", "y": "-1.1", "z": "47.9" },
+                "gyroscope": { "enabled": true, "active": true, "x": "-4.3", "y": "-29.2", "z": "7.7" },
+                "buttons": { "enabled": true, "active": true }
+        }, {
+                "accelerometer": { "enabled": true, "active": true, "x": "-0.3", "y": "0.1", "z": "3.8" },
+                "magnetometer": { "enabled": true, "active": true, "x": "-32.7", "y": "-0.9", "z": "57.8" },
+                "gyroscope": { "enabled": true, "active": true, "x": "-4.3", "y": "-29.2", "z": "7.7" },
+                "buttons": { "enabled": true, "active": true }
+        }, {
+                "accelerometer": { "enabled": true, "active": true, "x": "-1.2", "y": "-0.2", "z": "3.4" },
+                "magnetometer": { "enabled": true, "active": true, "x": "-32.7", "y": "-0.9", "z": "57.8" },
+                "gyroscope": { "enabled": true, "active": true, "x": "-4.3", "y": "-29.2", "z": "7.7" },
+                "buttons": { "enabled": true, "active": true }
+        }, {
+                "accelerometer": { "enabled": true, "active": true, "x": "-1.2", "y": "-0.2", "z": "3.4" },
+                "magnetometer": { "enabled": true, "active": true, "x": "-34.3", "y": "0.5", "z": "43.1" },
+                "gyroscope": { "enabled": true, "active": true, "x": "-4.3", "y": "-29.2", "z": "7.7" },
+                "buttons": { "enabled": true, "active": true }
+        }, {
+                "accelerometer": { "enabled": true, "active": true, "x": "-1.9", "y": "-0.1", "z": "3.6" },
+                "magnetometer": { "enabled": true, "active": true, "x": "-34.3", "y": "0.5", "z": "43.1" },
+                "gyroscope": { "enabled": true, "active": true, "x": "-4.3", "y": "-29.2", "z": "7.7" },
+                "buttons": { "enabled": true, "active": true }
+        }, {
+                "accelerometer": { "enabled": true, "active": true, "x": "-1.9", "y": "-0.1", "z": "3.6" },
+                "magnetometer": { "enabled": true, "active": true, "x": "-34.3", "y": "0.5", "z": "43.1" },
+                "gyroscope": { "enabled": true, "active": true, "x": "-11.5", "y": "-17.7", "z": "-45.5" },
+                "buttons": { "enabled": true, "active": true }
+        }, {
+                "accelerometer": { "enabled": true, "active": true, "x": "-1.9", "y": "-0.1", "z": "3.6" },
+                "magnetometer": { "enabled": true, "active": true, "x": "-35.3", "y": "1.6", "z": "50.6" },
+                "gyroscope": { "enabled": true, "active": true, "x": "-11.5", "y": "-17.7", "z": "-45.5" },
+                "buttons": { "enabled": true, "active": true }
+        }, {
+                "accelerometer": { "enabled": true, "active": true, "x": "-1.9", "y": "0.2", "z": "4.6" },
+                "magnetometer": { "enabled": true, "active": true, "x": "-35.3", "y": "1.6", "z": "50.6" },
+                "gyroscope": { "enabled": true, "active": true, "x": "-11.5", "y": "-17.7", "z": "-45.5" },
+                "buttons": { "enabled": true, "active": true }
+        }, {
+                "accelerometer": { "enabled": true, "active": true, "x": "-1.9", "y": "0.2", "z": "4.6" },
+                "magnetometer": { "enabled": true, "active": true, "x": "-34.3", "y": "0.9", "z": "51.8" },
+                "gyroscope": { "enabled": true, "active": true, "x": "-11.5", "y": "-17.7", "z": "-45.5" },
+                "buttons": { "enabled": true, "active": true }
+        }, {
+                "accelerometer": { "enabled": true, "active": true, "x": "-0.1", "y": "-0.6", "z": "3.1" },
+                "magnetometer": { "enabled": true, "active": true, "x": "-34.3", "y": "0.9", "z": "51.8" },
+                "gyroscope": { "enabled": true, "active": true, "x": "-11.5", "y": "-17.7", "z": "-45.5" },
+                "buttons": { "enabled": true, "active": true }
+        }, {
+                "accelerometer": { "enabled": true, "active": true, "x": "-0.1", "y": "-0.6", "z": "3.1" },
+                "magnetometer": { "enabled": true, "active": true, "x": "-33.6", "y": "0.4", "z": "48.7" },
+                "gyroscope": { "enabled": true, "active": true, "x": "-11.5", "y": "-17.7", "z": "-45.5" },
+                "buttons": { "enabled": true, "active": true }
+        }, {
+                "accelerometer": { "enabled": true, "active": true, "x": "-0.9", "y": "0.5", "z": "3.4" },
+                "magnetometer": { "enabled": true, "active": true, "x": "-33.6", "y": "0.4", "z": "48.7" },
+                "gyroscope": { "enabled": true, "active": true, "x": "-11.5", "y": "-17.7", "z": "-45.5" },
+                "buttons": { "enabled": true, "active": true }
+        }, {
+                "accelerometer": { "enabled": true, "active": true, "x": "-0.9", "y": "0.5", "z": "3.4" },
+                "magnetometer": { "enabled": true, "active": true, "x": "-35.9", "y": "0.5", "z": "49.9" },
+                "gyroscope": { "enabled": true, "active": true, "x": "-11.5", "y": "-17.7", "z": "-45.5" },
+                "buttons": { "enabled": true, "active": true }
+        }, {
+                "accelerometer": { "enabled": true, "active": true, "x": "-1.0", "y": "2.2", "z": "3.5" },
+                "magnetometer": { "enabled": true, "active": true, "x": "-35.9", "y": "0.5", "z": "49.9" },
+                "gyroscope": { "enabled": true, "active": true, "x": "-11.5", "y": "-17.7", "z": "-45.5" },
+                "buttons": { "enabled": true, "active": true }
+        }, {
+                "accelerometer": { "enabled": true, "active": true, "x": "-1.0", "y": "2.2", "z": "3.5" },
+                "magnetometer": { "enabled": true, "active": true, "x": "-37.7", "y": "0.5", "z": "39.9" },
+                "gyroscope": { "enabled": true, "active": true, "x": "-11.5", "y": "-17.7", "z": "-45.5" },
+                "buttons": { "enabled": true, "active": true }
+        }, {
+                "accelerometer": { "enabled": true, "active": true, "x": "-1.6", "y": "2.9", "z": "3.1" },
+                "magnetometer": { "enabled": true, "active": true, "x": "-37.7", "y": "0.5", "z": "39.9" },
+                "gyroscope": { "enabled": true, "active": true, "x": "-11.5", "y": "-17.7", "z": "-45.5" },
+                "buttons": { "enabled": true, "active": true }
+        }, {
+                "accelerometer": { "enabled": true, "active": true, "x": "-1.6", "y": "2.9", "z": "3.1" },
+                "magnetometer": { "enabled": true, "active": true, "x": "-37.7", "y": "0.5", "z": "39.9" },
+                "gyroscope": { "enabled": true, "active": true, "x": "22.1", "y": "50.8", "z": "6.1" },
+                "buttons": { "enabled": true, "active": true }
+        }, {
+                "accelerometer": { "enabled": true, "active": true, "x": "-1.6", "y": "2.9", "z": "3.1" },
+                "magnetometer": { "enabled": true, "active": true, "x": "-38.2", "y": "0.2", "z": "43.5" },
+                "gyroscope": { "enabled": true, "active": true, "x": "22.1", "y": "50.8", "z": "6.1" },
+                "buttons": { "enabled": true, "active": true }
+        }, {
+                "accelerometer": { "enabled": true, "active": true, "x": "-1.5", "y": "3.0", "z": "3.2" },
+                "magnetometer": { "enabled": true, "active": true, "x": "-38.2", "y": "0.2", "z": "43.5" },
+                "gyroscope": { "enabled": true, "active": true, "x": "22.1", "y": "50.8", "z": "6.1" },
+                "buttons": { "enabled": true, "active": true }
+        }, {
+                "accelerometer": { "enabled": true, "active": true, "x": "-1.5", "y": "3.0", "z": "3.2" },
+                "magnetometer": { "enabled": true, "active": true, "x": "-36.3", "y": "0.1", "z": "51.2" },
+                "gyroscope": { "enabled": true, "active": true, "x": "22.1", "y": "50.8", "z": "6.1" },
+                "buttons": { "enabled": true, "active": true }
+        }, {
+                "accelerometer": { "enabled": true, "active": true, "x": "-0.5", "y": "1.1", "z": "3.4" },
+                "magnetometer": { "enabled": true, "active": true, "x": "-36.3", "y": "0.1", "z": "51.2" },
+                "gyroscope": { "enabled": true, "active": true, "x": "22.1", "y": "50.8", "z": "6.1" },
+                "buttons": { "enabled": true, "active": true }
+        }, {
+                "accelerometer": { "enabled": true, "active": true, "x": "-0.5", "y": "1.1", "z": "3.4" },
+                "magnetometer": { "enabled": true, "active": true, "x": "-34.3", "y": "-0.4", "z": "46.5" },
+                "gyroscope": { "enabled": true, "active": true, "x": "22.1", "y": "50.8", "z": "6.1" },
+                "buttons": { "enabled": true, "active": true }
+        }, {
+                "accelerometer": { "enabled": true, "active": true, "x": "-0.4", "y": "-0.1", "z": "2.8" },
+                "magnetometer": { "enabled": true, "active": true, "x": "-34.3", "y": "-0.4", "z": "46.5" },
+                "gyroscope": { "enabled": true, "active": true, "x": "22.1", "y": "50.8", "z": "6.1" },
+                "buttons": { "enabled": true, "active": true }
+        }, {
+                "accelerometer": { "enabled": true, "active": true, "x": "-0.4", "y": "-0.1", "z": "2.8" },
+                "magnetometer": { "enabled": true, "active": true, "x": "-32.5", "y": "-0.7", "z": "53.3" },
+                "gyroscope": { "enabled": true, "active": true, "x": "22.1", "y": "50.8", "z": "6.1" },
+                "buttons": { "enabled": true, "active": true }
+        }, {
+                "accelerometer": { "enabled": true, "active": true, "x": "-0.5", "y": "0.2", "z": "3.9" },
+                "magnetometer": { "enabled": true, "active": true, "x": "-32.5", "y": "-0.7", "z": "53.3" },
+                "gyroscope": { "enabled": true, "active": true, "x": "22.1", "y": "50.8", "z": "6.1" },
+                "buttons": { "enabled": true, "active": true }
+        }, {
+                "accelerometer": { "enabled": true, "active": true, "x": "-0.5", "y": "0.2", "z": "3.9" },
+                "magnetometer": { "enabled": true, "active": true, "x": "-33.0", "y": "-0.5", "z": "49.9" },
+                "gyroscope": { "enabled": true, "active": true, "x": "22.1", "y": "50.8", "z": "6.1" },
+                "buttons": { "enabled": true, "active": true }
+        }, {
+                "accelerometer": { "enabled": true, "active": true, "x": "-0.8", "y": "0.2", "z": "4.1" },
+                "magnetometer": { "enabled": true, "active": true, "x": "-33.0", "y": "-0.5", "z": "49.9" },
+                "gyroscope": { "enabled": true, "active": true, "x": "22.1", "y": "50.8", "z": "6.1" },
+                "buttons": { "enabled": true, "active": true }
+        }, {
+                "accelerometer": { "enabled": true, "active": true, "x": "-0.8", "y": "0.2", "z": "4.1" },
+                "magnetometer": { "enabled": true, "active": true, "x": "-33.0", "y": "-0.5", "z": "49.9" },
+                "gyroscope": { "enabled": true, "active": true, "x": "119.0", "y": "6.6", "z": "-0.6" },
+                "buttons": { "enabled": true, "active": true }
+        }, {
+                "accelerometer": { "enabled": true, "active": true, "x": "-0.8", "y": "0.2", "z": "4.1" },
+                "magnetometer": { "enabled": true, "active": true, "x": "-33.6", "y": "2.3", "z": "48.4" },
+                "gyroscope": { "enabled": true, "active": true, "x": "119.0", "y": "6.6", "z": "-0.6" },
+                "buttons": { "enabled": true, "active": true }
+        }, {
+                "accelerometer": { "enabled": true, "active": true, "x": "1.6", "y": "0.1", "z": "4.0" },
+                "magnetometer": { "enabled": true, "active": true, "x": "-33.6", "y": "2.3", "z": "48.4" },
+                "gyroscope": { "enabled": true, "active": true, "x": "119.0", "y": "6.6", "z": "-0.6" },
+                "buttons": { "enabled": true, "active": true }
+        }, {
+                "accelerometer": { "enabled": true, "active": true, "x": "1.6", "y": "0.1", "z": "4.0" },
+                "magnetometer": { "enabled": true, "active": true, "x": "-34.3", "y": "6.0", "z": "47.0" },
+                "gyroscope": { "enabled": true, "active": true, "x": "119.0", "y": "6.6", "z": "-0.6" },
+                "buttons": { "enabled": true, "active": true }
+        }, {
+                "accelerometer": { "enabled": true, "active": true, "x": "2.5", "y": "0.0", "z": "3.0" },
+                "magnetometer": { "enabled": true, "active": true, "x": "-34.3", "y": "6.0", "z": "47.0" },
+                "gyroscope": { "enabled": true, "active": true, "x": "119.0", "y": "6.6", "z": "-0.6" },
+                "buttons": { "enabled": true, "active": true }
+        }, {
+                "accelerometer": { "enabled": true, "active": true, "x": "2.5", "y": "0.0", "z": "3.0" },
+                "magnetometer": { "enabled": true, "active": true, "x": "-35.0", "y": "9.4", "z": "46.1" },
+                "gyroscope": { "enabled": true, "active": true, "x": "119.0", "y": "6.6", "z": "-0.6" },
+                "buttons": { "enabled": true, "active": true }
+        }, {
+                "accelerometer": { "enabled": true, "active": true, "x": "3.8", "y": "0.1", "z": "1.9" },
+                "magnetometer": { "enabled": true, "active": true, "x": "-35.0", "y": "9.4", "z": "46.1" },
+                "gyroscope": { "enabled": true, "active": true, "x": "119.0", "y": "6.6", "z": "-0.6" },
+                "buttons": { "enabled": true, "active": true }
+        }, {
+                "accelerometer": { "enabled": true, "active": true, "x": "3.8", "y": "0.1", "z": "1.9" },
+                "magnetometer": { "enabled": true, "active": true, "x": "-36.1", "y": "11.8", "z": "37.3" },
+                "gyroscope": { "enabled": true, "active": true, "x": "119.0", "y": "6.6", "z": "-0.6" },
+                "buttons": { "enabled": true, "active": true }
+        }, {
+                "accelerometer": { "enabled": true, "active": true, "x": "3.6", "y": "-0.1", "z": "1.3" },
+                "magnetometer": { "enabled": true, "active": true, "x": "-36.1", "y": "11.8", "z": "37.3" },
+                "gyroscope": { "enabled": true, "active": true, "x": "119.0", "y": "6.6", "z": "-0.6" },
+                "buttons": { "enabled": true, "active": true }
+        }, {
+                "accelerometer": { "enabled": true, "active": true, "x": "3.6", "y": "-0.1", "z": "1.3" },
+                "magnetometer": { "enabled": true, "active": true, "x": "-35.9", "y": "11.5", "z": "39.8" },
+                "gyroscope": { "enabled": true, "active": true, "x": "119.0", "y": "6.6", "z": "-0.6" },
+                "buttons": { "enabled": true, "active": true }
+        }, {
+                "accelerometer": { "enabled": true, "active": true, "x": "2.6", "y": "0.0", "z": "2.3" },
+                "magnetometer": { "enabled": true, "active": true, "x": "-35.9", "y": "11.5", "z": "39.8" },
+                "gyroscope": { "enabled": true, "active": true, "x": "119.0", "y": "6.6", "z": "-0.6" },
+                "buttons": { "enabled": true, "active": true }
+        }, {
+                "accelerometer": { "enabled": true, "active": true, "x": "2.6", "y": "0.0", "z": "2.3" },
+                "magnetometer": { "enabled": true, "active": true, "x": "-35.9", "y": "11.5", "z": "39.8" },
+                "gyroscope": { "enabled": true, "active": true, "x": "-181.9", "y": "14.5", "z": "-31.0" },
+                "buttons": { "enabled": true, "active": true }
+        }, {
+                "accelerometer": { "enabled": true, "active": true, "x": "2.6", "y": "0.0", "z": "2.3" },
+                "magnetometer": { "enabled": true, "active": true, "x": "-34.5", "y": "6.1", "z": "45.7" },
+                "gyroscope": { "enabled": true, "active": true, "x": "-181.9", "y": "14.5", "z": "-31.0" },
+                "buttons": { "enabled": true, "active": true }
+        }, {
+                "accelerometer": { "enabled": true, "active": true, "x": "-0.2", "y": "0.1", "z": "4.2" },
+                "magnetometer": { "enabled": true, "active": true, "x": "-34.5", "y": "6.1", "z": "45.7" },
+                "gyroscope": { "enabled": true, "active": true, "x": "-181.9", "y": "14.5", "z": "-31.0" },
+                "buttons": { "enabled": true, "active": true }
+        }, {
+                "accelerometer": { "enabled": true, "active": true, "x": "-0.2", "y": "0.1", "z": "4.2" },
+                "magnetometer": { "enabled": true, "active": true, "x": "-31.7", "y": "-0.2", "z": "46.7" },
+                "gyroscope": { "enabled": true, "active": true, "x": "-181.9", "y": "14.5", "z": "-31.0" },
+                "buttons": { "enabled": true, "active": true }
+        }, {
+                "accelerometer": { "enabled": true, "active": true, "x": "-0.8", "y": "0.0", "z": "4.3" },
+                "magnetometer": { "enabled": true, "active": true, "x": "-31.7", "y": "-0.2", "z": "46.7" },
+                "gyroscope": { "enabled": true, "active": true, "x": "-181.9", "y": "14.5", "z": "-31.0" },
+                "buttons": { "enabled": true, "active": true }
+        }, {
+                "accelerometer": { "enabled": true, "active": true, "x": "-0.8", "y": "0.0", "z": "4.3" },
+                "magnetometer": { "enabled": true, "active": true, "x": "-31.1", "y": "-1.5", "z": "50.7" },
+                "gyroscope": { "enabled": true, "active": true, "x": "-181.9", "y": "14.5", "z": "-31.0" },
+                "buttons": { "enabled": true, "active": true }
+        }, {
+                "accelerometer": { "enabled": true, "active": true, "x": "-0.9", "y": "-0.4", "z": "3.1" },
+                "magnetometer": { "enabled": true, "active": true, "x": "-31.1", "y": "-1.5", "z": "50.7" },
+                "gyroscope": { "enabled": true, "active": true, "x": "-181.9", "y": "14.5", "z": "-31.0" },
+                "buttons": { "enabled": true, "active": true }
+        }, {
+                "accelerometer": { "enabled": true, "active": true, "x": "-0.9", "y": "-0.4", "z": "3.1" },
+                "magnetometer": { "enabled": true, "active": true, "x": "-29.3", "y": "-3.7", "z": "47.6" },
+                "gyroscope": { "enabled": true, "active": true, "x": "-181.9", "y": "14.5", "z": "-31.0" },
+                "buttons": { "enabled": true, "active": true }
+        }, {
+                "accelerometer": { "enabled": true, "active": true, "x": "-1.9", "y": "-0.4", "z": "3.1" },
+                "magnetometer": { "enabled": true, "active": true, "x": "-29.3", "y": "-3.7", "z": "47.6" },
+                "gyroscope": { "enabled": true, "active": true, "x": "-181.9", "y": "14.5", "z": "-31.0" },
+                "buttons": { "enabled": true, "active": true }
+        }, {
+                "accelerometer": { "enabled": true, "active": true, "x": "-1.9", "y": "-0.4", "z": "3.1" },
+                "magnetometer": { "enabled": true, "active": true, "x": "-29.8", "y": "-4.8", "z": "50.0" },
+                "gyroscope": { "enabled": true, "active": true, "x": "-181.9", "y": "14.5", "z": "-31.0" },
+                "buttons": { "enabled": true, "active": true }
+        }, {
+                "accelerometer": { "enabled": true, "active": true, "x": "-3.5", "y": "-0.3", "z": "2.1" },
+                "magnetometer": { "enabled": true, "active": true, "x": "-29.8", "y": "-4.8", "z": "50.0" },
+                "gyroscope": { "enabled": true, "active": true, "x": "-181.9", "y": "14.5", "z": "-31.0" },
+                "buttons": { "enabled": true, "active": true }
+        }, {
+                "accelerometer": { "enabled": true, "active": true, "x": "-3.5", "y": "-0.3", "z": "2.1" },
+                "magnetometer": { "enabled": true, "active": true, "x": "-29.8", "y": "-4.8", "z": "50.0" },
+                "gyroscope": { "enabled": true, "active": true, "x": "-25.8", "y": "10.3", "z": "12.2" },
+                "buttons": { "enabled": true, "active": true }
+        }, {
+                "accelerometer": { "enabled": true, "active": true, "x": "-3.5", "y": "-0.3", "z": "2.1" },
+                "magnetometer": { "enabled": true, "active": true, "x": "-31.3", "y": "-5.0", "z": "49.4" },
+                "gyroscope": { "enabled": true, "active": true, "x": "-25.8", "y": "10.3", "z": "12.2" },
+                "buttons": { "enabled": true, "active": true }
+        }, {
+                "accelerometer": { "enabled": true, "active": true, "x": "-3.9", "y": "-0.3", "z": "1.6" },
+                "magnetometer": { "enabled": true, "active": true, "x": "-31.3", "y": "-5.0", "z": "49.4" },
+                "gyroscope": { "enabled": true, "active": true, "x": "-25.8", "y": "10.3", "z": "12.2" },
+                "buttons": { "enabled": true, "active": true }
+        }, {
+                "accelerometer": { "enabled": true, "active": true, "x": "-3.9", "y": "-0.3", "z": "1.6" },
+                "magnetometer": { "enabled": true, "active": true, "x": "-31.5", "y": "-4.9", "z": "42.5" },
+                "gyroscope": { "enabled": true, "active": true, "x": "-25.8", "y": "10.3", "z": "12.2" },
+                "buttons": { "enabled": true, "active": true }
+        }, {
+                "accelerometer": { "enabled": true, "active": true, "x": "-3.6", "y": "-0.1", "z": "1.8" },
+                "magnetometer": { "enabled": true, "active": true, "x": "-31.5", "y": "-4.9", "z": "42.5" },
+                "gyroscope": { "enabled": true, "active": true, "x": "-25.8", "y": "10.3", "z": "12.2" },
+                "buttons": { "enabled": true, "active": true }
+        }, {
+                "accelerometer": { "enabled": true, "active": true, "x": "-3.6", "y": "-0.1", "z": "1.8" },
+                "magnetometer": { "enabled": true, "active": true, "x": "-31.6", "y": "-4.9", "z": "42.0" },
+                "gyroscope": { "enabled": true, "active": true, "x": "-25.8", "y": "10.3", "z": "12.2" },
+                "buttons": { "enabled": true, "active": true }
+        }, {
+                "accelerometer": { "enabled": true, "active": true, "x": "-3.1", "y": "-0.3", "z": "2.2" },
+                "magnetometer": { "enabled": true, "active": true, "x": "-31.6", "y": "-4.9", "z": "42.0" },
+                "gyroscope": { "enabled": true, "active": true, "x": "-25.8", "y": "10.3", "z": "12.2" },
+                "buttons": { "enabled": true, "active": true }
+        }, {
+                "accelerometer": { "enabled": true, "active": true, "x": "-3.1", "y": "-0.3", "z": "2.2" },
+                "magnetometer": { "enabled": true, "active": true, "x": "-31.0", "y": "-4.0", "z": "42.8" },
+                "gyroscope": { "enabled": true, "active": true, "x": "-25.8", "y": "10.3", "z": "12.2" },
+                "buttons": { "enabled": true, "active": true }
+        }, {
+                "accelerometer": { "enabled": true, "active": true, "x": "-2.9", "y": "-0.3", "z": "3.6" },
+                "magnetometer": { "enabled": true, "active": true, "x": "-31.0", "y": "-4.0", "z": "42.8" },
+                "gyroscope": { "enabled": true, "active": true, "x": "-25.8", "y": "10.3", "z": "12.2" },
+                "buttons": { "enabled": true, "active": true }
+        }, {
+                "accelerometer": { "enabled": true, "active": true, "x": "-2.9", "y": "-0.3", "z": "3.6" },
+                "magnetometer": { "enabled": true, "active": true, "x": "-31.4", "y": "-3.1", "z": "46.9" },
+                "gyroscope": { "enabled": true, "active": true, "x": "-25.8", "y": "10.3", "z": "12.2" },
+                "buttons": { "enabled": true, "active": true }
+        }, {
+                "accelerometer": { "enabled": true, "active": true, "x": "-2.4", "y": "-0.5", "z": "3.9" },
+                "magnetometer": { "enabled": true, "active": true, "x": "-31.4", "y": "-3.1", "z": "46.9" },
+                "gyroscope": { "enabled": true, "active": true, "x": "-25.8", "y": "10.3", "z": "12.2" },
+                "buttons": { "enabled": true, "active": true }
+        }, {
+                "accelerometer": { "enabled": true, "active": true, "x": "-2.4", "y": "-0.5", "z": "3.9" },
+                "magnetometer": { "enabled": true, "active": true, "x": "-31.4", "y": "-3.1", "z": "46.9" },
+                "gyroscope": { "enabled": true, "active": true, "x": "7.5", "y": "-20.1", "z": "-16.3" },
+                "buttons": { "enabled": true, "active": true }
+        }, {
+                "accelerometer": { "enabled": true, "active": true, "x": "-2.4", "y": "-0.5", "z": "3.9" },
+                "magnetometer": { "enabled": true, "active": true, "x": "-32.5", "y": "-1.4", "z": "49.3" },
+                "gyroscope": { "enabled": true, "active": true, "x": "7.5", "y": "-20.1", "z": "-16.3" },
+                "buttons": { "enabled": true, "active": true }
+        }, {
+                "accelerometer": { "enabled": true, "active": true, "x": "-1.0", "y": "-0.2", "z": "3.8" },
+                "magnetometer": { "enabled": true, "active": true, "x": "-32.5", "y": "-1.4", "z": "49.3" },
+                "gyroscope": { "enabled": true, "active": true, "x": "7.5", "y": "-20.1", "z": "-16.3" },
+                "buttons": { "enabled": true, "active": true }
+        }, {
+                "accelerometer": { "enabled": true, "active": true, "x": "-1.0", "y": "-0.2", "z": "3.8" },
+                "magnetometer": { "enabled": true, "active": true, "x": "-32.5", "y": "-1.3", "z": "50.5" },
+                "gyroscope": { "enabled": true, "active": true, "x": "7.5", "y": "-20.1", "z": "-16.3" },
+                "buttons": { "enabled": true, "active": true }
+        }, {
+                "accelerometer": { "enabled": true, "active": true, "x": "-1.1", "y": "0.2", "z": "3.9" },
+                "magnetometer": { "enabled": true, "active": true, "x": "-32.5", "y": "-1.3", "z": "50.5" },
+                "gyroscope": { "enabled": true, "active": true, "x": "7.5", "y": "-20.1", "z": "-16.3" },
+                "buttons": { "enabled": true, "active": true }
+        }, {
+                "accelerometer": { "enabled": true, "active": true, "x": "-1.1", "y": "0.2", "z": "3.9" },
+                "magnetometer": { "enabled": true, "active": true, "x": "-33.2", "y": "-1.1", "z": "46.0" },
+                "gyroscope": { "enabled": true, "active": true, "x": "7.5", "y": "-20.1", "z": "-16.3" },
+                "buttons": { "enabled": true, "active": true }
+        }, {
+                "accelerometer": { "enabled": true, "active": true, "x": "-1.3", "y": "0.1", "z": "3.8" },
+                "magnetometer": { "enabled": true, "active": true, "x": "-33.2", "y": "-1.1", "z": "46.0" },
+                "gyroscope": { "enabled": true, "active": true, "x": "7.5", "y": "-20.1", "z": "-16.3" },
+                "buttons": { "enabled": true, "active": true }
+        }, {
+                "accelerometer": { "enabled": true, "active": true, "x": "-1.3", "y": "0.1", "z": "3.8" },
+                "magnetometer": { "enabled": true, "active": true, "x": "-34.2", "y": "-0.3", "z": "49.1" },
+                "gyroscope": { "enabled": true, "active": true, "x": "7.5", "y": "-20.1", "z": "-16.3" },
+                "buttons": { "enabled": true, "active": true }
+        }, {
+                "accelerometer": { "enabled": true, "active": true, "x": "-1.1", "y": "0.2", "z": "3.9" },
+                "magnetometer": { "enabled": true, "active": true, "x": "-34.2", "y": "-0.3", "z": "49.1" },
+                "gyroscope": { "enabled": true, "active": true, "x": "7.5", "y": "-20.1", "z": "-16.3" },
+                "buttons": { "enabled": true, "active": true }
+        }, {
+                "accelerometer": { "enabled": true, "active": true, "x": "-1.1", "y": "0.2", "z": "3.9" },
+                "magnetometer": { "enabled": true, "active": true, "x": "-34.2", "y": "-0.3", "z": "49.1" },
+                "gyroscope": { "enabled": true, "active": true, "x": "7.5", "y": "-20.1", "z": "-16.3" },
+                "buttons": { "left": false, "right": false }
+        }, {
+                "accelerometer": { "enabled": true, "active": true, "x": "-1.1", "y": "0.2", "z": "3.9" },
+                "magnetometer": { "enabled": true, "active": true, "x": "-34.1", "y": "-0.1", "z": "53.7" },
+                "gyroscope": { "enabled": true, "active": true, "x": "7.5", "y": "-20.1", "z": "-16.3" },
+                "buttons": { "left": false, "right": false }
+        }, {
+                "accelerometer": { "enabled": true, "active": true, "x": "-1.6", "y": "-0.1", "z": "3.6" },
+                "magnetometer": { "enabled": true, "active": true, "x": "-34.1", "y": "-0.1", "z": "53.7" },
+                "gyroscope": { "enabled": true, "active": true, "x": "7.5", "y": "-20.1", "z": "-16.3" },
+                "buttons": { "left": false, "right": false }
+        }, {
+                "accelerometer": { "enabled": true, "active": true, "x": "-1.6", "y": "-0.1", "z": "3.6" },
+                "magnetometer": { "enabled": true, "active": true, "x": "-34.1", "y": "-0.1", "z": "53.7" },
+                "gyroscope": { "enabled": true, "active": true, "x": "6.5", "y": "6.0", "z": "-3.6" },
+                "buttons": { "left": false, "right": false }
+        }, {
+                "accelerometer": { "enabled": true, "active": true, "x": "-1.6", "y": "-0.1", "z": "3.6" },
+                "magnetometer": { "enabled": true, "active": true, "x": "-33.6", "y": "0.0", "z": "47.0" },
+                "gyroscope": { "enabled": true, "active": true, "x": "6.5", "y": "6.0", "z": "-3.6" },
+                "buttons": { "left": false, "right": false }
+        }]
+};
+
+},{}],2:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
@@ -88,7 +792,7 @@ var _class = function (_HTMLElement) {
              * list of props with XYZ characteristics
              * @type {string[]}
              */
-            this.sensors = ['buttons', 'accelerometer', 'magnetometer', 'gyroscope'];
+            this._sensors = [];
         }
     }, {
         key: 'onSensorTagUpdate',
@@ -98,18 +802,18 @@ var _class = function (_HTMLElement) {
          * @param data
          */
         value: function onSensorTagUpdate(eventtype, data) {
-            for (var c = 0; c < this.sensors.length; c++) {
-                if (data.sensors[this.sensors[c]]) {
-                    if (data.sensors[this.sensors[c]].active) {
-                        this.dom.panels[this.sensors[c]].panel.classList.add('active');
+            for (var c = 0; c < this._sensors.length; c++) {
+                if (data.sensors[this._sensors[c]]) {
+                    if (data.sensors[this._sensors[c]].active) {
+                        this.dom.panels[this._sensors[c]].panel.classList.add('active');
                     }
 
-                    if (data.sensors[this.sensors[c]].enabled) {
-                        this.dom.panels[this.sensors[c]].panel.classList.add('enabled');
+                    if (data.sensors[this._sensors[c]].enabled) {
+                        this.dom.panels[this._sensors[c]].panel.classList.add('enabled');
                     }
 
                     var multiplier;
-                    switch (this.sensors[c]) {
+                    switch (this._sensors[c]) {
                         case 'accelerometer':
                             multiplier = 10;
                             break;
@@ -121,7 +825,7 @@ var _class = function (_HTMLElement) {
                             break;
                     }
 
-                    if (this.sensors[c] === 'buttons') {
+                    if (this._sensors[c] === 'buttons') {
                         if (data.sensors.buttons.left) {
                             this.dom.panels.buttons.left.classList.add('on');
                         } else {
@@ -136,14 +840,14 @@ var _class = function (_HTMLElement) {
                     } else {
                         var axis = ['x', 'y', 'z'];
                         for (var d = 0; d < axis.length; d++) {
-                            var val = parseFloat(data.sensors[this.sensors[c]][axis[d]]);
-                            this.dom.panels[this.sensors[c]][axis[d]].bar.style.width = Math.abs(val * multiplier) + 'px';
+                            var val = parseFloat(data.sensors[this._sensors[c]][axis[d]]);
+                            this.dom.panels[this._sensors[c]][axis[d]].bar.style.width = Math.abs(val * multiplier) + 'px';
                             if (val < 0) {
-                                this.dom.panels[this.sensors[c]][axis[d]].bar.style.WebkitTransform = 'translateX(' + [axis[d]] * multiplier + 'px)';
+                                this.dom.panels[this._sensors[c]][axis[d]].bar.style.WebkitTransform = 'translateX(' + [axis[d]] * multiplier + 'px)';
                             } else {
-                                this.dom.panels[this.sensors[c]][axis[d]].bar.style.WebkitTransform = 'none';
+                                this.dom.panels[this._sensors[c]][axis[d]].bar.style.WebkitTransform = 'none';
                             }
-                            this.dom.panels[this.sensors[c]][axis[d]].label.innerText = val.toFixed(4);
+                            this.dom.panels[this._sensors[c]][axis[d]].label.innerText = val.toFixed(4);
                         }
                     }
                 }
@@ -156,12 +860,16 @@ var _class = function (_HTMLElement) {
 
     }, {
         key: 'connect',
-        value: function connect(tag) {
+        value: function connect(tag, simulate) {
             var _this2 = this;
 
             if (!tag) {
                 this.sensorTag = new _tisensortag2.default();
+            } else {
+                this.sensorTag = tag;
             }
+
+            this._simulate = simulate || this.simulate;
             this.sensorTag.connect(function (eventtype, data) {
                 return _this2.onSensorTagUpdate(eventtype, data);
             }, this._simulate);
@@ -179,6 +887,12 @@ var _class = function (_HTMLElement) {
                 this._simulate = true;
             } else {
                 this._simulate = false;
+            }
+
+            if (this.hasAttribute('sensors')) {
+                this._sensors = this.getAttribute('sensors').split(',');
+            } else {
+                this._sensors = ['buttons', 'accelerometer', 'magnetometer', 'gyroscope'];
             }
         }
     }, {
@@ -206,35 +920,35 @@ var _class = function (_HTMLElement) {
             this.root.appendChild(clone);
 
             this.dom = { panels: {} };
-            for (var c = 0; c < this.sensors.length; c++) {
+            for (var c = 0; c < this._sensors.length; c++) {
                 var paneltemplate;
                 var panelclone;
-                switch (this.sensors[c]) {
+                switch (this._sensors[c]) {
                     case 'buttons':
                         paneltemplate = this.owner.querySelector('template#buttons');
                         panelclone = paneltemplate.content.cloneNode(true);
-                        this.dom.panels[this.sensors[c]] = {};
-                        this.dom.panels[this.sensors[c]].left = panelclone.querySelector('.left.button');
-                        this.dom.panels[this.sensors[c]].right = panelclone.querySelector('.right.button');
+                        this.dom.panels[this._sensors[c]] = {};
+                        this.dom.panels[this._sensors[c]].left = panelclone.querySelector('.left.button');
+                        this.dom.panels[this._sensors[c]].right = panelclone.querySelector('.right.button');
                         break;
 
                     default:
                         paneltemplate = this.owner.querySelector('template#sensor');
                         panelclone = paneltemplate.content.cloneNode(true);
-                        this.dom.panels[this.sensors[c]] = {};
-                        this.dom.panels[this.sensors[c]].x = {};
-                        this.dom.panels[this.sensors[c]].x.label = panelclone.querySelector('.x.label .value');
-                        this.dom.panels[this.sensors[c]].x.bar = panelclone.querySelector('.x.bar');
-                        this.dom.panels[this.sensors[c]].y = {};
-                        this.dom.panels[this.sensors[c]].y.label = panelclone.querySelector('.y.label .value');
-                        this.dom.panels[this.sensors[c]].y.bar = panelclone.querySelector('.y.bar');
-                        this.dom.panels[this.sensors[c]].z = {};
-                        this.dom.panels[this.sensors[c]].z.label = panelclone.querySelector('.z.label .value');
-                        this.dom.panels[this.sensors[c]].z.bar = panelclone.querySelector('.z.bar');
+                        this.dom.panels[this._sensors[c]] = {};
+                        this.dom.panels[this._sensors[c]].x = {};
+                        this.dom.panels[this._sensors[c]].x.label = panelclone.querySelector('.x.label .value');
+                        this.dom.panels[this._sensors[c]].x.bar = panelclone.querySelector('.x.bar');
+                        this.dom.panels[this._sensors[c]].y = {};
+                        this.dom.panels[this._sensors[c]].y.label = panelclone.querySelector('.y.label .value');
+                        this.dom.panels[this._sensors[c]].y.bar = panelclone.querySelector('.y.bar');
+                        this.dom.panels[this._sensors[c]].z = {};
+                        this.dom.panels[this._sensors[c]].z.label = panelclone.querySelector('.z.label .value');
+                        this.dom.panels[this._sensors[c]].z.bar = panelclone.querySelector('.z.bar');
                 }
 
-                panelclone.querySelector('.header').innerText = this.sensors[c];
-                this.dom.panels[this.sensors[c]].panel = panelclone.querySelector('.group');
+                panelclone.querySelector('.header').innerText = this._sensors[c];
+                this.dom.panels[this._sensors[c]].panel = panelclone.querySelector('.group');
                 this.root.appendChild(panelclone);
             }
         }
@@ -265,7 +979,7 @@ var _class = function (_HTMLElement) {
 
 exports.default = _class;
 
-},{"./devices/tisensortag.es6":2}],2:[function(require,module,exports){
+},{"./devices/tisensortag.es6":3}],3:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -282,6 +996,14 @@ var _createClass = function () {
     };
 }();
 
+var _recording = require('../../recording.es6');
+
+var _recording2 = _interopRequireDefault(_recording);
+
+function _interopRequireDefault(obj) {
+    return obj && obj.__esModule ? obj : { default: obj };
+}
+
 function _classCallCheck(instance, Constructor) {
     if (!(instance instanceof Constructor)) {
         throw new TypeError("Cannot call a class as a function");
@@ -291,6 +1013,13 @@ function _classCallCheck(instance, Constructor) {
 var _class = function () {
     function _class() {
         _classCallCheck(this, _class);
+
+        /**
+         * index of current sensor snapshot in sim mode
+         * @type {number}
+         * @private
+         */
+        this._simIndex = 0;
 
         /**
          * socket connection
@@ -406,37 +1135,34 @@ var _class = function () {
     }, {
         key: 'getSimulatedSensors',
         value: function getSimulatedSensors() {
-            return {
+            var sim = {
                 connected: true,
                 device: {
                     systemid: 'xxxxx',
                     firmware: 'xxxxx',
                     manufacturer: 'xxxxx'
-                },
-                sensors: {
-                    accelerometer: {
-                        active: true,
-                        enabled: true,
-                        x: String(3 - Math.random() * 6),
-                        y: String(3 - Math.random() * 6),
-                        z: String(3 - Math.random() * 6)
-                    },
-                    magnetometer: {
-                        active: true,
-                        enabled: true,
-                        x: String(3 - Math.random() * 6),
-                        y: String(3 - Math.random() * 6),
-                        z: String(3 - Math.random() * 6)
-                    },
-                    gyroscope: {
-                        active: true,
-                        enabled: true,
-                        x: String(3 - Math.random() * 6),
-                        y: String(3 - Math.random() * 6),
-                        z: String(3 - Math.random() * 6)
-                    }
                 }
             };
+            var accelerometer = _recording2.default.samples[this._simIndex].accelerometer;
+            var gyroscope = _recording2.default.samples[this._simIndex].gyroscope;
+
+            sim.sensors = {
+                accelerometer: {
+                    x: accelerometer.x * 10,
+                    y: accelerometer.y * 10,
+                    z: accelerometer.z * 10
+                },
+                gyroscope: {
+                    x: gyroscope.x / 10,
+                    y: gyroscope.y / 10,
+                    z: gyroscope.z / 10
+                }
+            };
+            this._simIndex++;
+            if (this._simIndex >= _recording2.default.samples.length) {
+                this._simIndex = 0;
+            }
+            return sim;
         }
 
         /**
@@ -481,7 +1207,7 @@ var _class = function () {
 
 exports.default = _class;
 
-},{}]},{},[1])(1)
+},{"../../recording.es6":1}]},{},[2])(2)
 });
 
 

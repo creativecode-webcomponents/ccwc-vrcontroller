@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <link rel="import" href="../ccwc-sensortag-visualizer.html">
+    <link rel="import" href="../ccwc-vrcontroller-visualizer.html">
+    <script src="../vrcontroller.js"></script>
+    <style>
+        body {
+            padding: 0;
+            margin: 0;
+            background-color: #9a9a9a;
+        }
+        button {
+            font-size: larger;
+            display: inline-block;
+            margin: 15px;
+        }
+
+        ccwc-vrcontroller-visualizer {
+            height: 50vh;
+            width: 100%;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+<button onclick="onClick()">Connect to SensorTag</button>
+<ccwc-sensortag-visualizer sensors="buttons,accelerometer,magnetometer,gyroscope"></ccwc-sensortag-visualizer>
+<ccwc-vrcontroller-visualizer></ccwc-vrcontroller-visualizer>
+
+<script>
+    var sensortag = new ccwc.tisensortag();
+
+    function onClick() {
+        document.querySelector('ccwc-sensortag-visualizer').connect(sensortag, true);
+        document.querySelector('ccwc-vrcontroller-visualizer').connect(sensortag, true);
+    }
+</script>
+</body>
+</html>

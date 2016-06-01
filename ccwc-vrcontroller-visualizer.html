@@ -1,0 +1,21 @@
+<script src="src/ccwc-vrcontroller-visualizer.js"></script>
+<script>
+    CCWCVRControllerVisualizer.default.prototype.owner = (document._currentScript || document.currentScript).ownerDocument;
+    document.registerElement('ccwc-vrcontroller-visualizer', CCWCVRControllerVisualizer.default);
+</script>
+
+<template>
+    <style>
+        :host {
+            display: inline-block;
+        }
+
+        :host .threecontainer {
+            width: 100%;
+            height: 100%;
+            display: inline-block;
+        }
+    </style>
+
+    <div class="threecontainer"></div>
+</template>

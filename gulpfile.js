@@ -31,6 +31,20 @@ gulp.task('ccwc-sensortag-visualizer', function () {
         .pipe(gulp.dest('./src'));
 });
 
+gulp.task('ccwc-vrcontroller-visualizer', function () {
+    return browserify({
+        entries: 'src/ccwc-vrcontroller-visualizer.es6',
+        standalone: 'CCWCVRControllerVisualizer',
+        extensions: ['es2015'], debug: true})
+        .transform(babelify)
+        .bundle()
+        .pipe(source('ccwc-vrcontroller-visualizer.js'))
+        .pipe(buffer())
+        .pipe(sourcemaps.init({loadMaps: true}))
+        .pipe(sourcemaps.write('./'))
+        .pipe(gulp.dest('./src'));
+});
+
 
 gulp.task('deploy', function() {
     return gulp.src(['./**', '!./node_modules/**'])
@@ -39,4 +53,4 @@ gulp.task('deploy', function() {
 
 
 
-gulp.task('default', ['vrcontroller', 'ccwc-sensortag-visualizer']);
+gulp.task('default', ['vrcontroller', 'ccwc-sensortag-visualizer', 'ccwc-vrcontroller-visualizer']);

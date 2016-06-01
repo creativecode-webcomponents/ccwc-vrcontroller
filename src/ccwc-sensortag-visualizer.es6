@@ -33,7 +33,7 @@ export default class extends HTMLElement {
          * list of props with XYZ characteristics
          * @type {string[]}
          */
-        this.sensors = [ 'buttons', 'accelerometer', 'magnetometer', 'gyroscope' ];
+        this._sensors = [];
 
     };
 
@@ -42,18 +42,18 @@ export default class extends HTMLElement {
      * @param data
      */
     onSensorTagUpdate(eventtype, data) {
-        for (var c = 0; c < this.sensors.length; c++) {
-            if (data.sensors[this.sensors[c]]) {
-                if (data.sensors[this.sensors[c]].active) {
-                    this.dom.panels[this.sensors[c]].panel.classList.add('active');
+        for (var c = 0; c < this._sensors.length; c++) {
+            if (data.sensors[this._sensors[c]]) {
+                if (data.sensors[this._sensors[c]].active) {
+                    this.dom.panels[this._sensors[c]].panel.classList.add('active');
                 }
 
-                if (data.sensors[this.sensors[c]].enabled) {
-                    this.dom.panels[this.sensors[c]].panel.classList.add('enabled');
+                if (data.sensors[this._sensors[c]].enabled) {
+                    this.dom.panels[this._sensors[c]].panel.classList.add('enabled');
                 }
 
                 var multiplier;
-                switch(this.sensors[c]) {
+                switch(this._sensors[c]) {
                     case 'accelerometer':
                         multiplier = 10;
                         break;
@@ -65,7 +65,7 @@ export default class extends HTMLElement {
                         break;
                 }
 
-                if (this.sensors[c] === 'buttons') {
+                if (this._sensors[c] === 'buttons') {
                     if (data.sensors.buttons.left) {
                         this.dom.panels.buttons.left.classList.add('on');
                     } else {
@@ -80,11 +80,11 @@ export default class extends HTMLElement {
                 } else {
                     var axis = ['x', 'y', 'z'];
                     for (var d = 0; d < axis.length; d++ ) {
-                        var val = parseFloat(data.sensors[this.sensors[c]][axis[d]]);
-                        this.dom.panels[this.sensors[c]][axis[d]].bar.style.width = Math.abs(val * multiplier) + 'px';
-                        if (val < 0) { this.dom.panels[this.sensors[c]][axis[d]].bar.style.WebkitTransform = 'translateX(' + [axis[d]] * multiplier + 'px)'; }
-                        else { this.dom.panels[this.sensors[c]][axis[d]].bar.style.WebkitTransform = 'none'; }
-                        this.dom.panels[this.sensors[c]][axis[d]].label.innerText = val.toFixed(4);
+                        var val = parseFloat(data.sensors[this._sensors[c]][axis[d]]);
+                        this.dom.panels[this._sensors[c]][axis[d]].bar.style.width = Math.abs(val * multiplier) + 'px';
+                        if (val < 0) { this.dom.panels[this._sensors[c]][axis[d]].bar.style.WebkitTransform = 'translateX(' + [axis[d]] * multiplier + 'px)'; }
+                        else { this.dom.panels[this._sensors[c]][axis[d]].bar.style.WebkitTransform = 'none'; }
+                        this.dom.panels[this._sensors[c]][axis[d]].label.innerText = val.toFixed(4);
                     }
                 }
             }
@@ -94,10 +94,14 @@ export default class extends HTMLElement {
     /**
      * connect to sensortag
      */
-    connect(tag) {
+    connect(tag, simulate) {
         if (!tag) {
             this.sensorTag = new TISensorTag();
+        } else {
+            this.sensorTag = tag;
         }
+
+        this._simulate = simulate || this.simulate;
         this.sensorTag.connect( (eventtype, data) => this.onSensorTagUpdate(eventtype, data), this._simulate);
     }
 
@@ -110,6 +114,12 @@ export default class extends HTMLElement {
             this._simulate = true;
         } else {
             this._simulate = false;
+        }
+
+        if (this.hasAttribute('sensors')) {
+            this._sensors = this.getAttribute('sensors').split(',');
+        } else {
+            this._sensors = [ 'buttons', 'accelerometer', 'magnetometer', 'gyroscope' ];
         }
     };
 
@@ -133,35 +143,35 @@ export default class extends HTMLElement {
         this.root.appendChild(clone);
 
         this.dom = { panels: {} };
-        for (var c = 0; c < this.sensors.length; c++) {
+        for (var c = 0; c < this._sensors.length; c++) {
             var paneltemplate;
             var panelclone;
-            switch (this.sensors[c]) {
+            switch (this._sensors[c]) {
                 case 'buttons':
                     paneltemplate = this.owner.querySelector('template#buttons');
                     panelclone = paneltemplate.content.cloneNode(true);
-                    this.dom.panels[this.sensors[c]] = {};
-                    this.dom.panels[this.sensors[c]].left = panelclone.querySelector('.left.button');
-                    this.dom.panels[this.sensors[c]].right = panelclone.querySelector('.right.button');
+                    this.dom.panels[this._sensors[c]] = {};
+                    this.dom.panels[this._sensors[c]].left = panelclone.querySelector('.left.button');
+                    this.dom.panels[this._sensors[c]].right = panelclone.querySelector('.right.button');
                     break;
 
                 default:
                     paneltemplate = this.owner.querySelector('template#sensor');
                     panelclone = paneltemplate.content.cloneNode(true);
-                    this.dom.panels[this.sensors[c]] = {};
-                    this.dom.panels[this.sensors[c]].x = {};
-                    this.dom.panels[this.sensors[c]].x.label = panelclone.querySelector('.x.label .value');
-                    this.dom.panels[this.sensors[c]].x.bar = panelclone.querySelector('.x.bar');
-                    this.dom.panels[this.sensors[c]].y = {};
-                    this.dom.panels[this.sensors[c]].y.label = panelclone.querySelector('.y.label .value');
-                    this.dom.panels[this.sensors[c]].y.bar = panelclone.querySelector('.y.bar');
-                    this.dom.panels[this.sensors[c]].z = {};
-                    this.dom.panels[this.sensors[c]].z.label = panelclone.querySelector('.z.label .value');
-                    this.dom.panels[this.sensors[c]].z.bar = panelclone.querySelector('.z.bar');
+                    this.dom.panels[this._sensors[c]] = {};
+                    this.dom.panels[this._sensors[c]].x = {};
+                    this.dom.panels[this._sensors[c]].x.label = panelclone.querySelector('.x.label .value');
+                    this.dom.panels[this._sensors[c]].x.bar = panelclone.querySelector('.x.bar');
+                    this.dom.panels[this._sensors[c]].y = {};
+                    this.dom.panels[this._sensors[c]].y.label = panelclone.querySelector('.y.label .value');
+                    this.dom.panels[this._sensors[c]].y.bar = panelclone.querySelector('.y.bar');
+                    this.dom.panels[this._sensors[c]].z = {};
+                    this.dom.panels[this._sensors[c]].z.label = panelclone.querySelector('.z.label .value');
+                    this.dom.panels[this._sensors[c]].z.bar = panelclone.querySelector('.z.bar');
             }
 
-            panelclone.querySelector('.header').innerText = this.sensors[c];
-            this.dom.panels[this.sensors[c]].panel = panelclone.querySelector('.group');
+            panelclone.querySelector('.header').innerText = this._sensors[c];
+            this.dom.panels[this._sensors[c]].panel = panelclone.querySelector('.group');
             this.root.appendChild(panelclone);
         }
     }

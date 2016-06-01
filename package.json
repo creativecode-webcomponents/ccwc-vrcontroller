@@ -16,7 +16,11 @@
     "gulp-esdoc": "^0.1.0",
     "gulp-gh-pages": "^0.5.4",
     "gulp-sourcemaps": "^1.5.2",
+    "install": "^0.8.1",
+    "npm": "^3.9.3",
     "sensortag": "^1.2.2",
+    "three": "^0.77.1",
+    "threex": "^1.0.0",
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.1.0",
     "websocket": "^1.0.23"
