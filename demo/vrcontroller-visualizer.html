@@ -27,15 +27,13 @@
 </head>
 <body>
 <button onclick="onClick()">Connect to SensorTag</button>
-<ccwc-sensortag-visualizer sensors="buttons,accelerometer,magnetometer,gyroscope"></ccwc-sensortag-visualizer>
-<ccwc-vrcontroller-visualizer></ccwc-vrcontroller-visualizer>
+<!--<ccwc-sensortag-visualizer sensors="buttons,accelerometer,magnetometer,gyroscope"></ccwc-sensortag-visualizer>-->
+<ccwc-vrcontroller-visualizer sensor="simulator" sampledata="tisensortag-motion.json"></ccwc-vrcontroller-visualizer>
 
 <script>
-    var sensortag = new ccwc.tisensortag();
-
     function onClick() {
-        document.querySelector('ccwc-sensortag-visualizer').connect(sensortag, true);
-        document.querySelector('ccwc-vrcontroller-visualizer').connect(sensortag, true);
+     //   document.querySelector('ccwc-sensortag-visualizer').connect(sensortag, true);
+        document.querySelector('ccwc-vrcontroller-visualizer').connect();
     }
 </script>
 </body>

@@ -1,14 +1,7 @@
-import SampleData from '../../recording.es6';
+import Device from './device.es6';
 
-export default class {
+export default class extends Device {
     constructor() {
-        /**
-         * index of current sensor snapshot in sim mode
-         * @type {number}
-         * @private
-         */
-        this._simIndex = 0;
-
         /**
          * socket connection
          * @type {null}
@@ -20,13 +13,6 @@ export default class {
          * @type {Boolean}
          */
         this._connected = false;
-
-        /**
-         * event listeners
-         * @type {Array}
-         * @private
-         */
-        this._eventListeners = [];
 
         /**
          * base UUID
@@ -58,21 +44,13 @@ export default class {
     /**
      * connect to sensortag
      * @param cb callback
-     * @param {Boolean} simluate data
      */
-    connect(cb, simulate) {
+    connect(cb) {
         this._eventListeners.push(cb);
         if (this._connected) { return; }
         this.connected = true;
-        if (simulate) {
-            setInterval( () => {
-                cb('update', this.getSimulatedSensors());
-            }, 200);
 
-            setInterval( () => {
-                cb('update', this.getSimulatedButtons());
-            }, Math.random() * 10000 + 2000);
-        } else if (!navigator.bluetooth) {
+        if (!navigator.bluetooth) {
             console.log('no bluetooth support in your browser, trying websockets from a local node server');
             this.socket = new WebSocket('ws://localhost:8080');
             this.socket.onerror = function (error) { console.log('WebSocket Error ' + error); };
@@ -108,51 +86,6 @@ export default class {
                 })
                 .catch(error => this.onDeviceError(error));
         }
-    }
-
-    /**
-     * get simulated sensor data object
-     */
-    getSimulatedSensors() {
-        var sim = {
-            connected: true,
-            device: {
-                systemid: 'xxxxx',
-                firmware: 'xxxxx',
-                manufacturer: 'xxxxx'
-            }
-        };
-        var accelerometer = SampleData.samples[this._simIndex].accelerometer;
-        var gyroscope = SampleData.samples[this._simIndex].gyroscope;
-
-        sim.sensors = {
-            accelerometer: {
-                x: accelerometer.x * 10,
-                y: accelerometer.y * 10,
-                z: accelerometer.z * 10
-            },
-            gyroscope: {
-                x: gyroscope.x / 10,
-                y: gyroscope.y / 10,
-                z: gyroscope.z / 10
-            }
-        };
-        this._simIndex ++;
-        if (this._simIndex >= SampleData.samples.length) {
-            this._simIndex = 0;
-        }
-        return sim;
-    }
-
-    /**
-     * get simulated button data object
-     */
-    getSimulatedButtons() {
-        var data = this.getSimulatedSensors();
-        data.sensors.buttons = { active: true, enabled: true };
-        data.sensors.buttons.left = Math.random() > .5;
-        data.sensors.buttons.right = Math.random() > .5;
-        return data;
     }
 
     /**

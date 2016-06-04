@@ -18,6 +18,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import Vector3 from './vector3.es6';
 
 export default class {
     constructor( x, y, z, w ) {
@@ -192,38 +193,33 @@ export default class {
         return this;
     }
 
-    setFromUnitVectors() {
+    setFromUnitVectors(vFrom, vTo) {
         // http://lolengine.net/blog/2014/02/24/quaternion-from-two-vectors-final
         // assumes direction vectors vFrom and vTo are normalized
-
         var v1, r;
         var EPS = 0.000001;
 
-        return function ( vFrom, vTo ) {
-            if (v1 === undefined) v1 = new MathUtil.Vector3();
+        if (v1 === undefined) v1 = new Vector3();
 
-            r = vFrom.dot(vTo) + 1;
+        r = vFrom.dot(vTo) + 1;
 
-            if (r < EPS) {
-                r = 0;
+        if (r < EPS) {
+            r = 0;
 
-                if (Math.abs(vFrom.x) > Math.abs(vFrom.z)) {
-                    v1.set(-vFrom.y, vFrom.x, 0);
-                } else {
-                    v1.set(0, -vFrom.z, vFrom.y);
-                }
+            if (Math.abs(vFrom.x) > Math.abs(vFrom.z)) {
+                v1.set(-vFrom.y, vFrom.x, 0);
             } else {
-                v1.crossVectors(vFrom, vTo);
+                v1.set(0, -vFrom.z, vFrom.y);
             }
-
-            this.x = v1.x;
-            this.y = v1.y;
-            this.z = v1.z;
-            this.w = r;
-
-            this.normalize();
-
-            return this;
+        } else {
+            v1.crossVectors(vFrom, vTo);
         }
+
+        this.x = v1.x;
+        this.y = v1.y;
+        this.z = v1.z;
+        this.w = r;
+
+        this.normalize();
     }
 }

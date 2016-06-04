@@ -46,9 +46,9 @@ export default class {
 
         // Set the filter to world transform, depending on OS.
         //if (Util.isIOS()) {
-        this.filterToWorldQ.setFromAxisAngle(new Vector3(1, 0, 0), Math.PI / 2);
+       // this.filterToWorldQ.setFromAxisAngle(new Vector3(1, 0, 0), Math.PI / 2);
         //} else {
-        //  this.filterToWorldQ.setFromAxisAngle(new Vector3(1, 0, 0), -Math.PI / 2);
+          this.filterToWorldQ.setFromAxisAngle(new Vector3(1, 0, 0), -Math.PI / 2);
         //}
 
         this.inverseWorldToScreenQ = new Quaternion();
@@ -89,20 +89,9 @@ export default class {
         var out = new Quaternion();
         out.copy(this.filterToWorldQ);
         out.multiply(this.resetQ);
-        //if (!WebVRConfig.TOUCH_PANNER_DISABLED) {
-          //  out.multiply(this.touchPanner.getOrientation());
-        //}
         out.multiply(this.predictedQ);
         out.multiply(this.worldToScreenQ);
-
-        // Handle the yaw-only case.
-        if (Config.YAW_ONLY) {
-            // Make a quaternion that only turns around the Y-axis.
-            out.x = 0;
-            out.z = 0;
-            out.normalize();
-        }
-
+        
         this.orientationOut_[0] = out.x;
         this.orientationOut_[1] = out.y;
         this.orientationOut_[2] = out.z;
@@ -118,95 +107,35 @@ export default class {
         this.resetQ.z *= -1;
         this.resetQ.normalize();
 
-        // Take into account extra transformations in landscape mode.
-        //if (Util.isLandscapeMode()) {
-        //  this.resetQ.multiply(this.inverseWorldToScreenQ);
-        //}
-
         // Take into account original pose.
         this.resetQ.multiply(this.originalPoseAdjustQ);
-
-        /*if (!WebVRConfig.TOUCH_PANNER_DISABLED) {
-            this.touchPanner.resetSensor();
-        }*/
     }
 
     updateSensorData(data) {
         if (data.sensors && data.sensors.accelerometer && data.sensors.gyroscope) {
             var accGravity = data.sensors.accelerometer; //todo: gravity!
             var rotRate = data.sensors.gyroscope;
-            var timestampS = new Date().getTime();
+
+            //var accGravity = data.accelerationIncludingGravity; //todo: gravity!
+            //var rotRate = data.rotationRate;
+            var timestampS = data.sensors.timestamp / 1000;
 
             var deltaS = timestampS - this.previousTimestampS;
-            /*if (deltaS <= MathUtil.MIN_TIMESTEP || deltaS > MathUtil.MAX_TIMESTEP) {
+            if (deltaS <= MathUtil.MIN_TIMESTEP || deltaS > MathUtil.MAX_TIMESTEP) {
                 console.warn('Invalid timestamps detected. Time step between successive ' +
                     'gyroscope sensor samples is very small or not monotonic');
                 this.previousTimestampS = timestampS;
                 return;
-            }*/
-
+            }
+        
             this.accelerometer.set(-accGravity.x, -accGravity.y, -accGravity.z);
-            this.gyroscope.set(rotRate.x, rotRate.y, rotRate.z);
-
+            this.gyroscope.set(rotRate.alpha, rotRate.beta, rotRate.gamma);
+            this.gyroscope.multiplyScalar(Math.PI / 180);
+            
             this.filter.addAccelMeasurement(this.accelerometer, timestampS);
             this.filter.addGyroMeasurement(this.gyroscope, timestampS);
 
             this.previousTimestampS = timestampS;
         }
     }
-
-    /*onDeviceMotionChange_(deviceMotion) {
-        var accGravity = deviceMotion.accelerationIncludingGravity;
-        var rotRate = deviceMotion.rotationRate;
-        var timestampS = deviceMotion.timeStamp / 1000;
-
-        // Firefox Android timeStamp returns one thousandth of a millisecond.
-        //if (this.isFirefoxAndroid) {
-        //    timestampS /= 1000;
-        //}
-
-        var deltaS = timestampS - this.previousTimestampS;
-        if (deltaS <= MathUtil.MIN_TIMESTEP || deltaS > MathUtil.MAX_TIMESTEP) {
-            console.warn('Invalid timestamps detected. Time step between successive ' +
-                'gyroscope sensor samples is very small or not monotonic');
-            this.previousTimestampS = timestampS;
-            return;
-        }
-        this.accelerometer.set(-accGravity.x, -accGravity.y, -accGravity.z);
-        this.gyroscope.set(rotRate.alpha, rotRate.beta, rotRate.gamma);
-
-        // With iOS and Firefox Android, rotationRate is reported in degrees,
-        // so we first convert to radians.
-        //if (this.isIOS || this.isFirefoxAndroid) {
-        //  this.gyroscope.multiplyScalar(Math.PI / 180);
-        //}
-
-        this.filter.addAccelMeasurement(this.accelerometer, timestampS);
-        this.filter.addGyroMeasurement(this.gyroscope, timestampS);
-
-        this.previousTimestampS = timestampS;
-    }*/
-
-    /*onScreenOrientationChange_(screenOrientation) {
-        this.setScreenTransform_();
-    }
-
-    setScreenTransform_() {
-        this.worldToScreenQ.set(0, 0, 0, 1);
-        switch (window.orientation) {
-            case 0:
-                break;
-            case 90:
-                this.worldToScreenQ.setFromAxisAngle(new Vector3(0, 0, 1), -Math.PI / 2);
-                break;
-            case -90:
-                this.worldToScreenQ.setFromAxisAngle(new Vector3(0, 0, 1), Math.PI / 2);
-                break;
-            case 180:
-                // TODO.
-                break;
-        }
-        this.inverseWorldToScreenQ.copy(this.worldToScreenQ);
-        this.inverseWorldToScreenQ.inverse();
-    }*/
 }

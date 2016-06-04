@@ -11,6 +11,10 @@ var connections = [];
 var recording = [];
 var fs = require('fs');
 
+process.argv.forEach(function (val, index, array) {
+    console.log(val, index);
+});
+
 var controllerData = {
     connected: false,
     device: {},

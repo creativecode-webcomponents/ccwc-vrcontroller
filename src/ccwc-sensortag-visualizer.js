@@ -1148,9 +1148,9 @@ var _class = function () {
 
             sim.sensors = {
                 accelerometer: {
-                    x: accelerometer.x * 10,
-                    y: accelerometer.y * 10,
-                    z: accelerometer.z * 10
+                    x: accelerometer.x,
+                    y: accelerometer.y,
+                    z: accelerometer.z
                 },
                 gyroscope: {
                     x: gyroscope.x / 10,
@@ -1162,6 +1162,7 @@ var _class = function () {
             if (this._simIndex >= _recording2.default.samples.length) {
                 this._simIndex = 0;
             }
+            sim.timeStamp - this._simIndex * 15;
             return sim;
         }
 
