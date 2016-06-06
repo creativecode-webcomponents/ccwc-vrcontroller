@@ -2,6 +2,7 @@ import Device from './device.es6';
 
 export default class extends Device {
     constructor() {
+        super();
         /**
          * socket connection
          * @type {null}
@@ -57,9 +58,7 @@ export default class extends Device {
 
             this.socket.onmessage = (e) => {
                 var msg = JSON.parse(e.data);
-                for (var c = 0; c < this._eventListeners.length; c++) {
-                    this._eventListeners[c]('update', msg);
-                }
+                this.update(msg);
             };
 
             this.socket.onopen = (e) => {

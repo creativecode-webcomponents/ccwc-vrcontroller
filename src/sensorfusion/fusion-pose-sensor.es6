@@ -29,27 +29,14 @@ import Config from './config.es6';
  */
 export default class {
     constructor() {
-        this.deviceId = 'webvr-polyfill:fused';
-        this.deviceName = 'VR Position Device (webvr-polyfill:fused)';
-
         this.accelerometer = new Vector3();
         this.gyroscope = new Vector3();
 
-        //window.addEventListener('devicemotion', this.onDeviceMotionChange_.bind(this));
-        //window.addEventListener('orientationchange', this.onScreenOrientationChange_.bind(this));
-
         this.filter = new ComplementaryFilter(Config.K_FILTER);
         this.posePredictor = new PosePredictor(Config.PREDICTION_TIME_S);
-     //   this.touchPanner = new TouchPanner();
 
         this.filterToWorldQ = new Quaternion();
-
-        // Set the filter to world transform, depending on OS.
-        //if (Util.isIOS()) {
-       // this.filterToWorldQ.setFromAxisAngle(new Vector3(1, 0, 0), Math.PI / 2);
-        //} else {
-          this.filterToWorldQ.setFromAxisAngle(new Vector3(1, 0, 0), -Math.PI / 2);
-        //}
+        this.filterToWorldQ.setFromAxisAngle(new Vector3(1, 0, 0), -Math.PI / 2);
 
         this.inverseWorldToScreenQ = new Quaternion();
         this.worldToScreenQ = new Quaternion();
@@ -57,17 +44,8 @@ export default class {
         this.originalPoseAdjustQ.setFromAxisAngle(new Vector3(0, 0, 1),
             -window.orientation * Math.PI / 180);
 
-        //this.setScreenTransform_();
-        // Adjust this filter for being in landscape mode.
-        //if (Util.isLandscapeMode()) {
-        //  this.filterToWorldQ.multiply(this.inverseWorldToScreenQ);
-        //}
-
         // Keep track of a reset transform for resetSensor.
         this.resetQ = new Quaternion();
-
-        //this.isFirefoxAndroid = Util.isFirefoxAndroid();
-        //this.isIOS = Util.isIOS();
 
         this.orientationOut_ = new Float32Array(4);
     }
@@ -112,30 +90,25 @@ export default class {
     }
 
     updateSensorData(data) {
-        if (data.sensors && data.sensors.accelerometer && data.sensors.gyroscope) {
-            var accGravity = data.sensors.accelerometer; //todo: gravity!
-            var rotRate = data.sensors.gyroscope;
+        var accGravity = data.sensors.accelerometer; //todo: gravity!
+        var rotRate = data.sensors.gyroscope;
+        var timestampS = data.sensors.timestamp / 1000;
 
-            //var accGravity = data.accelerationIncludingGravity; //todo: gravity!
-            //var rotRate = data.rotationRate;
-            var timestampS = data.sensors.timestamp / 1000;
-
-            var deltaS = timestampS - this.previousTimestampS;
-            if (deltaS <= MathUtil.MIN_TIMESTEP || deltaS > MathUtil.MAX_TIMESTEP) {
-                console.warn('Invalid timestamps detected. Time step between successive ' +
-                    'gyroscope sensor samples is very small or not monotonic');
-                this.previousTimestampS = timestampS;
-                return;
-            }
-        
-            this.accelerometer.set(-accGravity.x, -accGravity.y, -accGravity.z);
-            this.gyroscope.set(rotRate.alpha, rotRate.beta, rotRate.gamma);
-            this.gyroscope.multiplyScalar(Math.PI / 180);
-            
-            this.filter.addAccelMeasurement(this.accelerometer, timestampS);
-            this.filter.addGyroMeasurement(this.gyroscope, timestampS);
-
+        var deltaS = timestampS - this.previousTimestampS;
+        if (deltaS <= MathUtil.MIN_TIMESTEP || deltaS > MathUtil.MAX_TIMESTEP) {
+            console.warn('Invalid timestamps detected. Time step between successive ' +
+                'gyroscope sensor samples is very small or not monotonic', deltaS);
             this.previousTimestampS = timestampS;
+            return;
         }
+
+        this.accelerometer.set(-accGravity.x, -accGravity.y, -accGravity.z);
+        this.gyroscope.set(rotRate.alpha, rotRate.beta, rotRate.gamma);
+        this.gyroscope.multiplyScalar(Math.PI / 180);
+
+        this.filter.addAccelMeasurement(this.accelerometer, timestampS);
+        this.filter.addGyroMeasurement(this.gyroscope, timestampS);
+
+        this.previousTimestampS = timestampS;
     }
 }

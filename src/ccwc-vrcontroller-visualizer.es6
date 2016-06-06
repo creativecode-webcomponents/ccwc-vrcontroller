@@ -60,6 +60,7 @@ export default class extends HTMLElement {
      */
     onSensorUpdate(eventtype, data) {
         if (data.sensors.orientation) {
+            this.axes.quaternion.fromArray(data.sensors.orientation);
             this.cursor.quaternion.fromArray(data.sensors.orientation);
         }
     }
@@ -187,19 +188,12 @@ export default class extends HTMLElement {
         this.cursor.position.set(40,40,40);
         this.scene.add(this.cursor);
 
-        var axes = new THREE.AxisHelper(50);
-        //axes.position = this.cursor.position;
-        this.scene.add(axes);
+        this.axes = new THREE.AxisHelper(50);
+        this.axes.position.set(this.cursor.position.x, this.cursor.position.y, this.cursor.position.z);
+        this.scene.add(this.axes);
 
         var gridXZ = new THREE.GridHelper(200, 10);
         this.scene.add(gridXZ);
-
-        // direction (normalized), origin, length, color(hex)
-        var origin = new THREE.Vector3(50,100,50);
-        var terminus  = new THREE.Vector3(75,75,75);
-        var direction = new THREE.Vector3().subVectors(terminus, origin).normalize();
-        var arrow = new THREE.ArrowHelper(direction, origin, 50, 0x884400);
-        this.scene.add(arrow);
     }
 
     /**

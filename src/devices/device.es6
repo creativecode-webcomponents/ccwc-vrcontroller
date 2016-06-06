@@ -47,10 +47,12 @@ export default class {
      * @param data
      */
     update(data) {
-        this._sensorfusion.updateSensorData(data);
-        data.sensors.orientation = this._sensorfusion.getOrientation();
-        for (var c = 0; c < this._eventListeners.length; c++) {
-            this._eventListeners[c]('motionupdate', data);
+        if (data.sensors && data.sensors.accelerometer && data.sensors.gyroscope) {
+            this._sensorfusion.updateSensorData(data);
+            data.sensors.orientation = this._sensorfusion.getOrientation();
+            for (var c = 0; c < this._eventListeners.length; c++) {
+                this._eventListeners[c]('motionupdate', data);
+            }
         }
     }
 }
