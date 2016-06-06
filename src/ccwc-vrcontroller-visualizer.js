@@ -124,7 +124,6 @@ var _class = function (_HTMLElement) {
         key: 'onSensorUpdate',
         value: function onSensorUpdate(eventtype, data) {
             if (data.sensors.orientation) {
-                this.axes.quaternion.fromArray(data.sensors.orientation);
                 this.cursor.quaternion.fromArray(data.sensors.orientation);
             }
         }
@@ -286,12 +285,19 @@ var _class = function (_HTMLElement) {
             this.cursor.position.set(40, 40, 40);
             this.scene.add(this.cursor);
 
-            this.axes = new THREE.AxisHelper(50);
-            this.axes.position.set(this.cursor.position.x, this.cursor.position.y, this.cursor.position.z);
-            this.scene.add(this.axes);
+            var axes = new THREE.AxisHelper(50);
+            //axes.position = this.cursor.position;
+            this.scene.add(axes);
 
             var gridXZ = new THREE.GridHelper(200, 10);
             this.scene.add(gridXZ);
+
+            // direction (normalized), origin, length, color(hex)
+            var origin = new THREE.Vector3(50, 100, 50);
+            var terminus = new THREE.Vector3(75, 75, 75);
+            var direction = new THREE.Vector3().subVectors(terminus, origin).normalize();
+            var arrow = new THREE.ArrowHelper(direction, origin, 50, 0x884400);
+            this.scene.add(arrow);
         }
 
         /**
@@ -411,12 +417,10 @@ var _class = function () {
     }, {
         key: 'update',
         value: function update(data) {
-            if (data.sensors && data.sensors.accelerometer && data.sensors.gyroscope) {
-                this._sensorfusion.updateSensorData(data);
-                data.sensors.orientation = this._sensorfusion.getOrientation();
-                for (var c = 0; c < this._eventListeners.length; c++) {
-                    this._eventListeners[c]('motionupdate', data);
-                }
+            this._sensorfusion.updateSensorData(data);
+            data.sensors.orientation = this._sensorfusion.getOrientation();
+            for (var c = 0; c < this._eventListeners.length; c++) {
+                this._eventListeners[c]('motionupdate', data);
             }
         }
     }]);
@@ -864,7 +868,9 @@ var _class = function (_Device) {
 
                 this.socket.onmessage = function (e) {
                     var msg = JSON.parse(e.data);
-                    _this2.update(msg);
+                    for (var c = 0; c < _this2._eventListeners.length; c++) {
+                        _this2._eventListeners[c]('update', msg);
+                    }
                 };
 
                 this.socket.onopen = function (e) {
@@ -1714,22 +1720,44 @@ var _class = function () {
     function _class() {
         _classCallCheck(this, _class);
 
+        this.deviceId = 'webvr-polyfill:fused';
+        this.deviceName = 'VR Position Device (webvr-polyfill:fused)';
+
         this.accelerometer = new _vector2.default();
         this.gyroscope = new _vector2.default();
 
+        //window.addEventListener('devicemotion', this.onDeviceMotionChange_.bind(this));
+        //window.addEventListener('orientationchange', this.onScreenOrientationChange_.bind(this));
+
         this.filter = new _complementaryFilter2.default(_config2.default.K_FILTER);
         this.posePredictor = new _posePredictor2.default(_config2.default.PREDICTION_TIME_S);
+        //   this.touchPanner = new TouchPanner();
 
         this.filterToWorldQ = new _quaternion2.default();
+
+        // Set the filter to world transform, depending on OS.
+        //if (Util.isIOS()) {
+        // this.filterToWorldQ.setFromAxisAngle(new Vector3(1, 0, 0), Math.PI / 2);
+        //} else {
         this.filterToWorldQ.setFromAxisAngle(new _vector2.default(1, 0, 0), -Math.PI / 2);
+        //}
 
         this.inverseWorldToScreenQ = new _quaternion2.default();
         this.worldToScreenQ = new _quaternion2.default();
         this.originalPoseAdjustQ = new _quaternion2.default();
         this.originalPoseAdjustQ.setFromAxisAngle(new _vector2.default(0, 0, 1), -window.orientation * Math.PI / 180);
 
+        //this.setScreenTransform_();
+        // Adjust this filter for being in landscape mode.
+        //if (Util.isLandscapeMode()) {
+        //  this.filterToWorldQ.multiply(this.inverseWorldToScreenQ);
+        //}
+
         // Keep track of a reset transform for resetSensor.
         this.resetQ = new _quaternion2.default();
+
+        //this.isFirefoxAndroid = Util.isFirefoxAndroid();
+        //this.isIOS = Util.isIOS();
 
         this.orientationOut_ = new Float32Array(4);
     }
@@ -1779,25 +1807,30 @@ var _class = function () {
     }, {
         key: 'updateSensorData',
         value: function updateSensorData(data) {
-            var accGravity = data.sensors.accelerometer; //todo: gravity!
-            var rotRate = data.sensors.gyroscope;
-            var timestampS = data.sensors.timestamp / 1000;
+            if (data.sensors && data.sensors.accelerometer && data.sensors.gyroscope) {
+                var accGravity = data.sensors.accelerometer; //todo: gravity!
+                var rotRate = data.sensors.gyroscope;
 
-            var deltaS = timestampS - this.previousTimestampS;
-            if (deltaS <= _util2.default.MIN_TIMESTEP || deltaS > _util2.default.MAX_TIMESTEP) {
-                console.warn('Invalid timestamps detected. Time step between successive ' + 'gyroscope sensor samples is very small or not monotonic', deltaS);
+                //var accGravity = data.accelerationIncludingGravity; //todo: gravity!
+                //var rotRate = data.rotationRate;
+                var timestampS = data.sensors.timestamp / 1000;
+
+                var deltaS = timestampS - this.previousTimestampS;
+                if (deltaS <= _util2.default.MIN_TIMESTEP || deltaS > _util2.default.MAX_TIMESTEP) {
+                    console.warn('Invalid timestamps detected. Time step between successive ' + 'gyroscope sensor samples is very small or not monotonic');
+                    this.previousTimestampS = timestampS;
+                    return;
+                }
+
+                this.accelerometer.set(-accGravity.x, -accGravity.y, -accGravity.z);
+                this.gyroscope.set(rotRate.alpha, rotRate.beta, rotRate.gamma);
+                this.gyroscope.multiplyScalar(Math.PI / 180);
+
+                this.filter.addAccelMeasurement(this.accelerometer, timestampS);
+                this.filter.addGyroMeasurement(this.gyroscope, timestampS);
+
                 this.previousTimestampS = timestampS;
-                return;
             }
-
-            this.accelerometer.set(-accGravity.x, -accGravity.y, -accGravity.z);
-            this.gyroscope.set(rotRate.alpha, rotRate.beta, rotRate.gamma);
-            this.gyroscope.multiplyScalar(Math.PI / 180);
-
-            this.filter.addAccelMeasurement(this.accelerometer, timestampS);
-            this.filter.addGyroMeasurement(this.gyroscope, timestampS);
-
-            this.previousTimestampS = timestampS;
         }
     }]);
 
@@ -1810,17 +1843,17 @@ exports.default = _class;
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
-    value: true
+        value: true
 });
 
 var _createClass = function () {
-    function defineProperties(target, props) {
-        for (var i = 0; i < props.length; i++) {
-            var descriptor = props[i];descriptor.enumerable = descriptor.enumerable || false;descriptor.configurable = true;if ("value" in descriptor) descriptor.writable = true;Object.defineProperty(target, descriptor.key, descriptor);
-        }
-    }return function (Constructor, protoProps, staticProps) {
-        if (protoProps) defineProperties(Constructor.prototype, protoProps);if (staticProps) defineProperties(Constructor, staticProps);return Constructor;
-    };
+        function defineProperties(target, props) {
+                for (var i = 0; i < props.length; i++) {
+                        var descriptor = props[i];descriptor.enumerable = descriptor.enumerable || false;descriptor.configurable = true;if ("value" in descriptor) descriptor.writable = true;Object.defineProperty(target, descriptor.key, descriptor);
+                }
+        }return function (Constructor, protoProps, staticProps) {
+                if (protoProps) defineProperties(Constructor.prototype, protoProps);if (staticProps) defineProperties(Constructor, staticProps);return Constructor;
+        };
 }(); /**
       * Heavily lifted from WebVR-Polyfill project by Boris Smus: https://github.com/borismus/webvr-polyfill
       * but refactored to use different data source provided over BLE by the TI Sensor Tag
@@ -1853,13 +1886,13 @@ var _util = require('../math/util.es6');
 var _util2 = _interopRequireDefault(_util);
 
 function _interopRequireDefault(obj) {
-    return obj && obj.__esModule ? obj : { default: obj };
+        return obj && obj.__esModule ? obj : { default: obj };
 }
 
 function _classCallCheck(instance, Constructor) {
-    if (!(instance instanceof Constructor)) {
-        throw new TypeError("Cannot call a class as a function");
-    }
+        if (!(instance instanceof Constructor)) {
+                throw new TypeError("Cannot call a class as a function");
+        }
 }
 
 /**
@@ -1873,63 +1906,64 @@ function _classCallCheck(instance, Constructor) {
  */
 
 var _class = function () {
-    function _class(predictionTimeS) {
-        _classCallCheck(this, _class);
+        function _class(predictionTimeS) {
+                _classCallCheck(this, _class);
 
-        this.predictionTimeS = predictionTimeS;
+                this.predictionTimeS = predictionTimeS;
 
-        // The quaternion corresponding to the previous state.
-        this.previousQ = new _quaternion2.default();
-        // Previous time a prediction occurred.
-        this.previousTimestampS = null;
+                // The quaternion corresponding to the previous state.
+                this.previousQ = new _quaternion2.default();
+                // Previous time a prediction occurred.
+                this.previousTimestampS = null;
 
-        // The delta quaternion that adjusts the current pose.
-        this.deltaQ = new _quaternion2.default();
-        // The output quaternion.
-        this.outQ = new _quaternion2.default();
-    }
-
-    _createClass(_class, [{
-        key: 'getPrediction',
-        value: function getPrediction(currentQ, gyro, timestampS) {
-            if (!this.previousTimestampS) {
-                this.previousQ.copy(currentQ);
-                this.previousTimestampS = timestampS;
-                return currentQ;
-            }
-
-            // Calculate axis and angle based on gyroscope rotation rate data.
-            var axis = new _vector2.default();
-            axis.copy(gyro);
-            axis.normalize();
-
-            var angularSpeed = gyro.length();
-
-            // If we're rotating slowly, don't do prediction.
-            if (angularSpeed < _util2.default.degToRad * 20) {
-                //if (DEBUG) {
-                console.log('Moving slowly, at %s deg/s: no prediction', (_util2.default.radToDeg * angularSpeed).toFixed(1));
-                //}
-                this.outQ.copy(currentQ);
-                this.previousQ.copy(currentQ);
-                return this.outQ;
-            }
-
-            // Get the predicted angle based on the time delta and latency.
-            var deltaT = timestampS - this.previousTimestampS;
-            var predictAngle = angularSpeed * this.predictionTimeS;
-
-            this.deltaQ.setFromAxisAngle(axis, predictAngle);
-            this.outQ.copy(this.previousQ);
-            this.outQ.multiply(this.deltaQ);
-
-            this.previousQ.copy(currentQ);
-
-            return this.outQ;
+                // The delta quaternion that adjusts the current pose.
+                this.deltaQ = new _quaternion2.default();
+                // The output quaternion.
+                this.outQ = new _quaternion2.default();
         }
-    }]);
 
-    return _class;
+        _createClass(_class, [{
+                key: 'getPrediction',
+                value: function getPrediction(currentQ, gyro, timestampS) {
+                        if (!this.previousTimestampS) {
+                                this.previousQ.copy(currentQ);
+                                this.previousTimestampS = timestampS;
+                                return currentQ;
+                        }
+
+                        // Calculate axis and angle based on gyroscope rotation rate data.
+                        var axis = new _vector2.default();
+                        axis.copy(gyro);
+                        axis.normalize();
+
+                        var angularSpeed = gyro.length();
+
+                        // If we're rotating slowly, don't do prediction.
+                        if (angularSpeed < _util2.default.degToRad * 20) {
+                                //if (DEBUG) {
+                                // console.log('Moving slowly, at %s deg/s: no prediction',
+                                //  (MathUtil.radToDeg * angularSpeed).toFixed(1));
+                                //}
+                                this.outQ.copy(currentQ);
+                                this.previousQ.copy(currentQ);
+                                return this.outQ;
+                        }
+
+                        // Get the predicted angle based on the time delta and latency.
+                        var deltaT = timestampS - this.previousTimestampS;
+                        var predictAngle = angularSpeed * this.predictionTimeS;
+
+                        this.deltaQ.setFromAxisAngle(axis, predictAngle);
+                        this.outQ.copy(this.previousQ);
+                        this.outQ.multiply(this.deltaQ);
+
+                        this.previousQ.copy(currentQ);
+
+                        return this.outQ;
+                }
+        }]);
+
+        return _class;
 }();
 
 exports.default = _class;

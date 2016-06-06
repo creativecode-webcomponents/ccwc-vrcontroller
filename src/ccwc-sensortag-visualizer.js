@@ -21,6 +21,14 @@ var _tisensortag = require('./devices/tisensortag.es6');
 
 var _tisensortag2 = _interopRequireDefault(_tisensortag);
 
+var _simulator = require('./devices/simulator.es6');
+
+var _simulator2 = _interopRequireDefault(_simulator);
+
+var _laptop = require('./devices/laptop.es6');
+
+var _laptop2 = _interopRequireDefault(_laptop);
+
 function _interopRequireDefault(obj) {
     return obj && obj.__esModule ? obj : { default: obj };
 }
@@ -91,13 +99,13 @@ var _class = function (_HTMLElement) {
             this._sensors = [];
         }
     }, {
-        key: 'onSensorTagUpdate',
+        key: 'onSensorUpdate',
 
         /**
-         * on sensortag update
+         * on sensor update
          * @param data
          */
-        value: function onSensorTagUpdate(eventtype, data) {
+        value: function onSensorUpdate(eventtype, data) {
             for (var c = 0; c < this._sensors.length; c++) {
                 if (data.sensors[this._sensors[c]]) {
                     if (data.sensors[this._sensors[c]].active) {
@@ -135,6 +143,9 @@ var _class = function (_HTMLElement) {
                         }
                     } else {
                         var axis = ['x', 'y', 'z'];
+                        if (this._sensors[c] === 'gyroscope') {
+                            axis = ['alpha', 'beta', 'gamma'];
+                        }
                         for (var d = 0; d < axis.length; d++) {
                             var val = parseFloat(data.sensors[this._sensors[c]][axis[d]]);
                             this.dom.panels[this._sensors[c]][axis[d]].bar.style.width = Math.abs(val * multiplier) + 'px';
@@ -156,19 +167,46 @@ var _class = function (_HTMLElement) {
 
     }, {
         key: 'connect',
-        value: function connect(tag, simulate) {
+        value: function connect(sensor) {
             var _this2 = this;
 
-            if (!tag) {
-                this.sensorTag = new _tisensortag2.default();
+            if (sensor) {
+                this._sensor = sensor;
             } else {
-                this.sensorTag = tag;
-            }
+                switch (this._sensorType) {
+                    case 'simulator':
+                        if (this._sampleData) {
+                            var xobj = new XMLHttpRequest();
+                            xobj.open('GET', this._sampleData, true);
+                            xobj.onreadystatechange = function () {
+                                if (xobj.readyState == 4 && xobj.status == '200') {
+                                    _this2._sensor = new _simulator2.default(JSON.parse(xobj.responseText).samples);
+                                    _this2._sensor.connect(function (eventtype, data) {
+                                        return _this2.onSensorUpdate(eventtype, data);
+                                    });
+                                }
+                            };
+                            xobj.send(null);
+                        } else {
+                            throw new Error('Simulator requires using sampledata parameter to pass in a URI with samples');
+                        }
+                        break;
 
-            this._simulate = simulate || this.simulate;
-            this.sensorTag.connect(function (eventtype, data) {
-                return _this2.onSensorTagUpdate(eventtype, data);
-            }, this._simulate);
+                    case 'laptop':
+                        this._sensor = new _laptop2.default();
+                        this._sensor.connect(function (eventtype, data) {
+                            return _this2.onSensorUpdate(eventtype, data);
+                        });
+                        break;
+
+                    case 'tisensortag':
+                        this._sensor = new _tisensortag2.default();
+                        this._sensor.connect(function (eventtype, data) {
+                            return _this2.onSensorUpdate(eventtype, data);
+                        });
+                        break;
+                }
+            }
         }
 
         /**
@@ -179,10 +217,28 @@ var _class = function (_HTMLElement) {
     }, {
         key: 'parseAttributes',
         value: function parseAttributes() {
-            if (this.hasAttribute('simulate')) {
-                this._simulate = true;
-            } else {
-                this._simulate = false;
+            if (this.hasAttribute('sensor')) {
+                this._sensorType = this.getAttribute('sensor');
+            }
+
+            if (this.hasAttribute('sampledata')) {
+                this._sampleData = this.getAttribute('sampledata');
+            }
+        }
+    }, {
+        key: 'parseAttributes',
+
+        /**
+         * parse attributes on element
+         * @private
+         */
+        value: function parseAttributes() {
+            if (this.hasAttribute('sensor')) {
+                this._sensorType = this.getAttribute('sensor');
+            }
+
+            if (this.hasAttribute('sampledata')) {
+                this._sampleData = this.getAttribute('sampledata');
             }
 
             if (this.hasAttribute('sensors')) {
@@ -231,16 +287,20 @@ var _class = function (_HTMLElement) {
                     default:
                         paneltemplate = this.owner.querySelector('template#sensor');
                         panelclone = paneltemplate.content.cloneNode(true);
+                        var axis = ['x', 'y', 'z'];
+                        if (this._sensors[c] === 'gyroscope') {
+                            axis = ['alpha', 'beta', 'gamma'];
+                        }
                         this.dom.panels[this._sensors[c]] = {};
-                        this.dom.panels[this._sensors[c]].x = {};
-                        this.dom.panels[this._sensors[c]].x.label = panelclone.querySelector('.x.label .value');
-                        this.dom.panels[this._sensors[c]].x.bar = panelclone.querySelector('.x.bar');
-                        this.dom.panels[this._sensors[c]].y = {};
-                        this.dom.panels[this._sensors[c]].y.label = panelclone.querySelector('.y.label .value');
-                        this.dom.panels[this._sensors[c]].y.bar = panelclone.querySelector('.y.bar');
-                        this.dom.panels[this._sensors[c]].z = {};
-                        this.dom.panels[this._sensors[c]].z.label = panelclone.querySelector('.z.label .value');
-                        this.dom.panels[this._sensors[c]].z.bar = panelclone.querySelector('.z.bar');
+                        this.dom.panels[this._sensors[c]][axis[0]] = {};
+                        this.dom.panels[this._sensors[c]][axis[0]].label = panelclone.querySelector('.x.label .value');
+                        this.dom.panels[this._sensors[c]][axis[0]].bar = panelclone.querySelector('.x.bar');
+                        this.dom.panels[this._sensors[c]][axis[1]] = {};
+                        this.dom.panels[this._sensors[c]][axis[1]].label = panelclone.querySelector('.y.label .value');
+                        this.dom.panels[this._sensors[c]][axis[1]].bar = panelclone.querySelector('.y.bar');
+                        this.dom.panels[this._sensors[c]][axis[2]] = {};
+                        this.dom.panels[this._sensors[c]][axis[2]].label = panelclone.querySelector('.z.label .value');
+                        this.dom.panels[this._sensors[c]][axis[2]].bar = panelclone.querySelector('.z.bar');
                 }
 
                 panelclone.querySelector('.header').innerText = this._sensors[c];
@@ -275,7 +335,7 @@ var _class = function (_HTMLElement) {
 
 exports.default = _class;
 
-},{"./devices/tisensortag.es6":3}],2:[function(require,module,exports){
+},{"./devices/laptop.es6":3,"./devices/simulator.es6":4,"./devices/tisensortag.es6":5}],2:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -366,12 +426,10 @@ var _class = function () {
     }, {
         key: 'update',
         value: function update(data) {
-            if (data.sensors && data.sensors.accelerometer && data.sensors.gyroscope) {
-                this._sensorfusion.updateSensorData(data);
-                data.sensors.orientation = this._sensorfusion.getOrientation();
-                for (var c = 0; c < this._eventListeners.length; c++) {
-                    this._eventListeners[c]('motionupdate', data);
-                }
+            this._sensorfusion.updateSensorData(data);
+            data.sensors.orientation = this._sensorfusion.getOrientation();
+            for (var c = 0; c < this._eventListeners.length; c++) {
+                this._eventListeners[c]('motionupdate', data);
             }
         }
     }]);
@@ -381,7 +439,326 @@ var _class = function () {
 
 exports.default = _class;
 
-},{"../sensorfusion/fusion-pose-sensor.es6":9}],3:[function(require,module,exports){
+},{"../sensorfusion/fusion-pose-sensor.es6":11}],3:[function(require,module,exports){
+'use strict';
+
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () {
+    function defineProperties(target, props) {
+        for (var i = 0; i < props.length; i++) {
+            var descriptor = props[i];descriptor.enumerable = descriptor.enumerable || false;descriptor.configurable = true;if ("value" in descriptor) descriptor.writable = true;Object.defineProperty(target, descriptor.key, descriptor);
+        }
+    }return function (Constructor, protoProps, staticProps) {
+        if (protoProps) defineProperties(Constructor.prototype, protoProps);if (staticProps) defineProperties(Constructor, staticProps);return Constructor;
+    };
+}();
+
+var _get = function get(object, property, receiver) {
+    if (object === null) object = Function.prototype;var desc = Object.getOwnPropertyDescriptor(object, property);if (desc === undefined) {
+        var parent = Object.getPrototypeOf(object);if (parent === null) {
+            return undefined;
+        } else {
+            return get(parent, property, receiver);
+        }
+    } else if ("value" in desc) {
+        return desc.value;
+    } else {
+        var getter = desc.get;if (getter === undefined) {
+            return undefined;
+        }return getter.call(receiver);
+    }
+};
+
+var _device = require('./device.es6');
+
+var _device2 = _interopRequireDefault(_device);
+
+function _interopRequireDefault(obj) {
+    return obj && obj.__esModule ? obj : { default: obj };
+}
+
+function _classCallCheck(instance, Constructor) {
+    if (!(instance instanceof Constructor)) {
+        throw new TypeError("Cannot call a class as a function");
+    }
+}
+
+function _possibleConstructorReturn(self, call) {
+    if (!self) {
+        throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
+    }return call && ((typeof call === "undefined" ? "undefined" : _typeof(call)) === "object" || typeof call === "function") ? call : self;
+}
+
+function _inherits(subClass, superClass) {
+    if (typeof superClass !== "function" && superClass !== null) {
+        throw new TypeError("Super expression must either be null or a function, not " + (typeof superClass === "undefined" ? "undefined" : _typeof(superClass)));
+    }subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } });if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
+}
+
+var _class = function (_Device) {
+    _inherits(_class, _Device);
+
+    function _class() {
+        _classCallCheck(this, _class);
+
+        return _possibleConstructorReturn(this, Object.getPrototypeOf(_class).call(this));
+    }
+
+    /**
+     * connect to sensortag
+     * @param cb callback
+     */
+
+    _createClass(_class, [{
+        key: 'connect',
+        value: function connect(cb) {
+            var _this2 = this;
+
+            _get(Object.getPrototypeOf(_class.prototype), 'connect', this).call(this, cb);
+            window.addEventListener('devicemotion', function (event) {
+                return _this2.onMotionEvent(event);
+            });
+        }
+
+        /**
+         * disconnect
+         * @param cb
+         */
+
+    }, {
+        key: 'disconnect',
+        value: function disconnect(cb) {
+            var _this3 = this;
+
+            _get(Object.getPrototypeOf(_class.prototype), 'disconnect', this).call(this, cb);
+            if (this._eventListeners.length === 0) {
+                window.removeEventListener('devicemotion', function (event) {
+                    return _this3.onMotionEvent(event);
+                });
+            }
+        }
+
+        /**
+         * on motion event
+         * @param event
+         */
+
+    }, {
+        key: 'onMotionEvent',
+        value: function onMotionEvent(event) {
+            var data = {
+                sensors: {
+                    interval: event.interval,
+                    timestamp: event.timeStamp,
+                    accelerometer: {
+                        x: event.accelerationIncludingGravity.x,
+                        y: event.accelerationIncludingGravity.y,
+                        z: event.accelerationIncludingGravity.z
+                    },
+                    gyroscope: {
+                        alpha: event.rotationRate.alpha,
+                        beta: event.rotationRate.beta,
+                        gamma: event.rotationRate.gamma
+                    }
+                }
+            };
+            this.update(data);
+        }
+    }]);
+
+    return _class;
+}(_device2.default);
+
+exports.default = _class;
+
+},{"./device.es6":2}],4:[function(require,module,exports){
+'use strict';
+
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () {
+    function defineProperties(target, props) {
+        for (var i = 0; i < props.length; i++) {
+            var descriptor = props[i];descriptor.enumerable = descriptor.enumerable || false;descriptor.configurable = true;if ("value" in descriptor) descriptor.writable = true;Object.defineProperty(target, descriptor.key, descriptor);
+        }
+    }return function (Constructor, protoProps, staticProps) {
+        if (protoProps) defineProperties(Constructor.prototype, protoProps);if (staticProps) defineProperties(Constructor, staticProps);return Constructor;
+    };
+}();
+
+var _get = function get(object, property, receiver) {
+    if (object === null) object = Function.prototype;var desc = Object.getOwnPropertyDescriptor(object, property);if (desc === undefined) {
+        var parent = Object.getPrototypeOf(object);if (parent === null) {
+            return undefined;
+        } else {
+            return get(parent, property, receiver);
+        }
+    } else if ("value" in desc) {
+        return desc.value;
+    } else {
+        var getter = desc.get;if (getter === undefined) {
+            return undefined;
+        }return getter.call(receiver);
+    }
+};
+
+var _device = require('./device.es6');
+
+var _device2 = _interopRequireDefault(_device);
+
+function _interopRequireDefault(obj) {
+    return obj && obj.__esModule ? obj : { default: obj };
+}
+
+function _classCallCheck(instance, Constructor) {
+    if (!(instance instanceof Constructor)) {
+        throw new TypeError("Cannot call a class as a function");
+    }
+}
+
+function _possibleConstructorReturn(self, call) {
+    if (!self) {
+        throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
+    }return call && ((typeof call === "undefined" ? "undefined" : _typeof(call)) === "object" || typeof call === "function") ? call : self;
+}
+
+function _inherits(subClass, superClass) {
+    if (typeof superClass !== "function" && superClass !== null) {
+        throw new TypeError("Super expression must either be null or a function, not " + (typeof superClass === "undefined" ? "undefined" : _typeof(superClass)));
+    }subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } });if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
+}
+
+var _class = function (_Device) {
+    _inherits(_class, _Device);
+
+    function _class(sampledata) {
+        _classCallCheck(this, _class);
+
+        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(_class).call(this));
+
+        _this.data = sampledata;
+
+        /**
+         * index of current sensor snapshot in sim mode
+         * @type {number}
+         * @private
+         */
+        _this._simIndex = 0;
+        return _this;
+    }
+
+    /**
+     * set data
+     * @param sampledata
+     */
+
+    _createClass(_class, [{
+        key: 'connect',
+
+        /**
+         * connect to sensortag
+         * @param cb callback
+         */
+        value: function connect(cb) {
+            var _this2 = this;
+
+            _get(Object.getPrototypeOf(_class.prototype), 'connect', this).call(this, cb);
+            this.interval = setInterval(function () {
+                _this2.update(_this2.getSimulatedSensors());
+            }, this._refreshInterval);
+        }
+
+        /**
+         * disconnect
+         * @param cb
+         */
+
+    }, {
+        key: 'disconnect',
+        value: function disconnect(cb) {
+            _get(Object.getPrototypeOf(_class.prototype), 'disconnect', this).call(this, cb);
+            clearInterval(this.interval);
+        }
+
+        /**
+         * get simulated sensor data object
+         */
+
+    }, {
+        key: 'getSimulatedSensors',
+        value: function getSimulatedSensors() {
+            var sim = {
+                connected: true,
+                device: {
+                    systemid: 'xxxxx',
+                    firmware: 'xxxxx',
+                    manufacturer: 'xxxxx'
+                }
+            };
+            var accelerometer = this._data[this._simIndex].accelerometer;
+            var gyroscope = this._data[this._simIndex].gyroscope;
+
+            sim.sensors = {
+                interval: this._data[this._simIndex].interval,
+                timestamp: this._data[this._simIndex].timestamp,
+                accelerometer: {
+                    x: accelerometer.x,
+                    y: accelerometer.y,
+                    z: accelerometer.z
+                },
+                gyroscope: {
+                    alpha: gyroscope.alpha,
+                    beta: gyroscope.beta,
+                    gamma: gyroscope.gamma
+                }
+            };
+            this._simIndex++;
+            if (this._simIndex >= this._data.length) {
+                this._simIndex = 0;
+            }
+            return sim;
+        }
+
+        /**
+         * get simulated button data object
+         */
+
+    }, {
+        key: 'getSimulatedButtons',
+        value: function getSimulatedButtons() {
+            var data = this.getSimulatedSensors();
+            data.sensors.buttons = { active: true, enabled: true };
+            data.sensors.buttons.left = Math.random() > .5;
+            data.sensors.buttons.right = Math.random() > .5;
+            return data;
+        }
+    }, {
+        key: 'data',
+        set: function set(sampledata) {
+            this._data = sampledata;
+            var intervalTTL = 0;
+            for (var c = 0; c < this._data.length; c++) {
+                intervalTTL += this._data[c].interval;
+            }
+            this._refreshInterval = intervalTTL / this._data.length;
+        }
+    }]);
+
+    return _class;
+}(_device2.default);
+
+exports.default = _class;
+
+},{"./device.es6":2}],5:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
@@ -500,7 +877,9 @@ var _class = function (_Device) {
 
                 this.socket.onmessage = function (e) {
                     var msg = JSON.parse(e.data);
-                    _this2.update(msg);
+                    for (var c = 0; c < _this2._eventListeners.length; c++) {
+                        _this2._eventListeners[c]('update', msg);
+                    }
                 };
 
                 this.socket.onopen = function (e) {
@@ -554,7 +933,7 @@ var _class = function (_Device) {
 
 exports.default = _class;
 
-},{"./device.es6":2}],4:[function(require,module,exports){
+},{"./device.es6":2}],6:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -837,7 +1216,7 @@ var _class = function () {
 
 exports.default = _class;
 
-},{"./vector3.es6":6}],5:[function(require,module,exports){
+},{"./vector3.es6":8}],7:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -884,7 +1263,7 @@ exports.default = {
     }
 };
 
-},{}],6:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1038,7 +1417,7 @@ var _class = function () {
 exports.default = _class;
 ;
 
-},{}],7:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1257,7 +1636,7 @@ var _class = function () {
 
 exports.default = _class;
 
-},{"../math/quaternion.es6":4,"../math/util.es6":5,"../math/vector3.es6":6,"./sensor-sample.es6":11}],8:[function(require,module,exports){
+},{"../math/quaternion.es6":6,"../math/util.es6":7,"../math/vector3.es6":8,"./sensor-sample.es6":13}],10:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1272,7 +1651,7 @@ exports.default = {
     YAW_ONLY: true
 };
 
-},{}],9:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1350,22 +1729,44 @@ var _class = function () {
     function _class() {
         _classCallCheck(this, _class);
 
+        this.deviceId = 'webvr-polyfill:fused';
+        this.deviceName = 'VR Position Device (webvr-polyfill:fused)';
+
         this.accelerometer = new _vector2.default();
         this.gyroscope = new _vector2.default();
 
+        //window.addEventListener('devicemotion', this.onDeviceMotionChange_.bind(this));
+        //window.addEventListener('orientationchange', this.onScreenOrientationChange_.bind(this));
+
         this.filter = new _complementaryFilter2.default(_config2.default.K_FILTER);
         this.posePredictor = new _posePredictor2.default(_config2.default.PREDICTION_TIME_S);
+        //   this.touchPanner = new TouchPanner();
 
         this.filterToWorldQ = new _quaternion2.default();
+
+        // Set the filter to world transform, depending on OS.
+        //if (Util.isIOS()) {
+        // this.filterToWorldQ.setFromAxisAngle(new Vector3(1, 0, 0), Math.PI / 2);
+        //} else {
         this.filterToWorldQ.setFromAxisAngle(new _vector2.default(1, 0, 0), -Math.PI / 2);
+        //}
 
         this.inverseWorldToScreenQ = new _quaternion2.default();
         this.worldToScreenQ = new _quaternion2.default();
         this.originalPoseAdjustQ = new _quaternion2.default();
         this.originalPoseAdjustQ.setFromAxisAngle(new _vector2.default(0, 0, 1), -window.orientation * Math.PI / 180);
 
+        //this.setScreenTransform_();
+        // Adjust this filter for being in landscape mode.
+        //if (Util.isLandscapeMode()) {
+        //  this.filterToWorldQ.multiply(this.inverseWorldToScreenQ);
+        //}
+
         // Keep track of a reset transform for resetSensor.
         this.resetQ = new _quaternion2.default();
+
+        //this.isFirefoxAndroid = Util.isFirefoxAndroid();
+        //this.isIOS = Util.isIOS();
 
         this.orientationOut_ = new Float32Array(4);
     }
@@ -1415,25 +1816,30 @@ var _class = function () {
     }, {
         key: 'updateSensorData',
         value: function updateSensorData(data) {
-            var accGravity = data.sensors.accelerometer; //todo: gravity!
-            var rotRate = data.sensors.gyroscope;
-            var timestampS = data.sensors.timestamp / 1000;
+            if (data.sensors && data.sensors.accelerometer && data.sensors.gyroscope) {
+                var accGravity = data.sensors.accelerometer; //todo: gravity!
+                var rotRate = data.sensors.gyroscope;
 
-            var deltaS = timestampS - this.previousTimestampS;
-            if (deltaS <= _util2.default.MIN_TIMESTEP || deltaS > _util2.default.MAX_TIMESTEP) {
-                console.warn('Invalid timestamps detected. Time step between successive ' + 'gyroscope sensor samples is very small or not monotonic', deltaS);
+                //var accGravity = data.accelerationIncludingGravity; //todo: gravity!
+                //var rotRate = data.rotationRate;
+                var timestampS = data.sensors.timestamp / 1000;
+
+                var deltaS = timestampS - this.previousTimestampS;
+                if (deltaS <= _util2.default.MIN_TIMESTEP || deltaS > _util2.default.MAX_TIMESTEP) {
+                    console.warn('Invalid timestamps detected. Time step between successive ' + 'gyroscope sensor samples is very small or not monotonic');
+                    this.previousTimestampS = timestampS;
+                    return;
+                }
+
+                this.accelerometer.set(-accGravity.x, -accGravity.y, -accGravity.z);
+                this.gyroscope.set(rotRate.alpha, rotRate.beta, rotRate.gamma);
+                this.gyroscope.multiplyScalar(Math.PI / 180);
+
+                this.filter.addAccelMeasurement(this.accelerometer, timestampS);
+                this.filter.addGyroMeasurement(this.gyroscope, timestampS);
+
                 this.previousTimestampS = timestampS;
-                return;
             }
-
-            this.accelerometer.set(-accGravity.x, -accGravity.y, -accGravity.z);
-            this.gyroscope.set(rotRate.alpha, rotRate.beta, rotRate.gamma);
-            this.gyroscope.multiplyScalar(Math.PI / 180);
-
-            this.filter.addAccelMeasurement(this.accelerometer, timestampS);
-            this.filter.addGyroMeasurement(this.gyroscope, timestampS);
-
-            this.previousTimestampS = timestampS;
         }
     }]);
 
@@ -1442,21 +1848,21 @@ var _class = function () {
 
 exports.default = _class;
 
-},{"../math/quaternion.es6":4,"../math/util.es6":5,"../math/vector3.es6":6,"./complementary-filter.es6":7,"./config.es6":8,"./pose-predictor.es6":10}],10:[function(require,module,exports){
+},{"../math/quaternion.es6":6,"../math/util.es6":7,"../math/vector3.es6":8,"./complementary-filter.es6":9,"./config.es6":10,"./pose-predictor.es6":12}],12:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
-    value: true
+        value: true
 });
 
 var _createClass = function () {
-    function defineProperties(target, props) {
-        for (var i = 0; i < props.length; i++) {
-            var descriptor = props[i];descriptor.enumerable = descriptor.enumerable || false;descriptor.configurable = true;if ("value" in descriptor) descriptor.writable = true;Object.defineProperty(target, descriptor.key, descriptor);
-        }
-    }return function (Constructor, protoProps, staticProps) {
-        if (protoProps) defineProperties(Constructor.prototype, protoProps);if (staticProps) defineProperties(Constructor, staticProps);return Constructor;
-    };
+        function defineProperties(target, props) {
+                for (var i = 0; i < props.length; i++) {
+                        var descriptor = props[i];descriptor.enumerable = descriptor.enumerable || false;descriptor.configurable = true;if ("value" in descriptor) descriptor.writable = true;Object.defineProperty(target, descriptor.key, descriptor);
+                }
+        }return function (Constructor, protoProps, staticProps) {
+                if (protoProps) defineProperties(Constructor.prototype, protoProps);if (staticProps) defineProperties(Constructor, staticProps);return Constructor;
+        };
 }(); /**
       * Heavily lifted from WebVR-Polyfill project by Boris Smus: https://github.com/borismus/webvr-polyfill
       * but refactored to use different data source provided over BLE by the TI Sensor Tag
@@ -1489,13 +1895,13 @@ var _util = require('../math/util.es6');
 var _util2 = _interopRequireDefault(_util);
 
 function _interopRequireDefault(obj) {
-    return obj && obj.__esModule ? obj : { default: obj };
+        return obj && obj.__esModule ? obj : { default: obj };
 }
 
 function _classCallCheck(instance, Constructor) {
-    if (!(instance instanceof Constructor)) {
-        throw new TypeError("Cannot call a class as a function");
-    }
+        if (!(instance instanceof Constructor)) {
+                throw new TypeError("Cannot call a class as a function");
+        }
 }
 
 /**
@@ -1509,69 +1915,70 @@ function _classCallCheck(instance, Constructor) {
  */
 
 var _class = function () {
-    function _class(predictionTimeS) {
-        _classCallCheck(this, _class);
+        function _class(predictionTimeS) {
+                _classCallCheck(this, _class);
 
-        this.predictionTimeS = predictionTimeS;
+                this.predictionTimeS = predictionTimeS;
 
-        // The quaternion corresponding to the previous state.
-        this.previousQ = new _quaternion2.default();
-        // Previous time a prediction occurred.
-        this.previousTimestampS = null;
+                // The quaternion corresponding to the previous state.
+                this.previousQ = new _quaternion2.default();
+                // Previous time a prediction occurred.
+                this.previousTimestampS = null;
 
-        // The delta quaternion that adjusts the current pose.
-        this.deltaQ = new _quaternion2.default();
-        // The output quaternion.
-        this.outQ = new _quaternion2.default();
-    }
-
-    _createClass(_class, [{
-        key: 'getPrediction',
-        value: function getPrediction(currentQ, gyro, timestampS) {
-            if (!this.previousTimestampS) {
-                this.previousQ.copy(currentQ);
-                this.previousTimestampS = timestampS;
-                return currentQ;
-            }
-
-            // Calculate axis and angle based on gyroscope rotation rate data.
-            var axis = new _vector2.default();
-            axis.copy(gyro);
-            axis.normalize();
-
-            var angularSpeed = gyro.length();
-
-            // If we're rotating slowly, don't do prediction.
-            if (angularSpeed < _util2.default.degToRad * 20) {
-                //if (DEBUG) {
-                console.log('Moving slowly, at %s deg/s: no prediction', (_util2.default.radToDeg * angularSpeed).toFixed(1));
-                //}
-                this.outQ.copy(currentQ);
-                this.previousQ.copy(currentQ);
-                return this.outQ;
-            }
-
-            // Get the predicted angle based on the time delta and latency.
-            var deltaT = timestampS - this.previousTimestampS;
-            var predictAngle = angularSpeed * this.predictionTimeS;
-
-            this.deltaQ.setFromAxisAngle(axis, predictAngle);
-            this.outQ.copy(this.previousQ);
-            this.outQ.multiply(this.deltaQ);
-
-            this.previousQ.copy(currentQ);
-
-            return this.outQ;
+                // The delta quaternion that adjusts the current pose.
+                this.deltaQ = new _quaternion2.default();
+                // The output quaternion.
+                this.outQ = new _quaternion2.default();
         }
-    }]);
 
-    return _class;
+        _createClass(_class, [{
+                key: 'getPrediction',
+                value: function getPrediction(currentQ, gyro, timestampS) {
+                        if (!this.previousTimestampS) {
+                                this.previousQ.copy(currentQ);
+                                this.previousTimestampS = timestampS;
+                                return currentQ;
+                        }
+
+                        // Calculate axis and angle based on gyroscope rotation rate data.
+                        var axis = new _vector2.default();
+                        axis.copy(gyro);
+                        axis.normalize();
+
+                        var angularSpeed = gyro.length();
+
+                        // If we're rotating slowly, don't do prediction.
+                        if (angularSpeed < _util2.default.degToRad * 20) {
+                                //if (DEBUG) {
+                                // console.log('Moving slowly, at %s deg/s: no prediction',
+                                //  (MathUtil.radToDeg * angularSpeed).toFixed(1));
+                                //}
+                                this.outQ.copy(currentQ);
+                                this.previousQ.copy(currentQ);
+                                return this.outQ;
+                        }
+
+                        // Get the predicted angle based on the time delta and latency.
+                        var deltaT = timestampS - this.previousTimestampS;
+                        var predictAngle = angularSpeed * this.predictionTimeS;
+
+                        this.deltaQ.setFromAxisAngle(axis, predictAngle);
+                        this.outQ.copy(this.previousQ);
+                        this.outQ.multiply(this.deltaQ);
+
+                        this.previousQ.copy(currentQ);
+
+                        return this.outQ;
+                }
+        }]);
+
+        return _class;
 }();
 
 exports.default = _class;
 ;
 
-},{"../math/quaternion.es6":4,"../math/util.es6":5,"../math/vector3.es6":6}],11:[function(require,module,exports){
+},{"../math/quaternion.es6":6,"../math/util.es6":7,"../math/vector3.es6":8}],13:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
