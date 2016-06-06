@@ -2,6 +2,7 @@ import Device from './device.es6';
 
 export default class extends Device {
     constructor() {
+        super();
         /**
          * socket connection
          * @type {null}

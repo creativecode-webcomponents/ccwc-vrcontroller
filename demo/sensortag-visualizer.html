@@ -13,7 +13,9 @@
 </head>
 <body>
     <!--<ccwc-sensortag-visualizer simulate></ccwc-sensortag-visualizer>-->
-    <ccwc-sensortag-visualizer simulate sensors="buttons,accelerometer,magnetometer,gyroscope"></ccwc-sensortag-visualizer>
+    <ccwc-sensortag-visualizer
+            sensor="laptop" sampledata="laptop-motion.json"
+            sensors="buttons,accelerometer,magnetometer,gyroscope"></ccwc-sensortag-visualizer>
     <button onclick="onClick()">Connect to SensorTag</button>
 
     <script>

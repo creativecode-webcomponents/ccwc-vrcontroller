@@ -63,8 +63,8 @@ export default class {
         // If we're rotating slowly, don't do prediction.
         if (angularSpeed < MathUtil.degToRad * 20) {
             //if (DEBUG) {
-                console.log('Moving slowly, at %s deg/s: no prediction',
-                    (MathUtil.radToDeg * angularSpeed).toFixed(1));
+               // console.log('Moving slowly, at %s deg/s: no prediction',
+                  //  (MathUtil.radToDeg * angularSpeed).toFixed(1));
             //}
             this.outQ.copy(currentQ);
             this.previousQ.copy(currentQ);

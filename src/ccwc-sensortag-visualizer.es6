@@ -1,4 +1,6 @@
 import TISensorTag from './devices/tisensortag.es6';
+import Simulator from './devices/simulator.es6';
+import Laptop from './devices/laptop.es6';
 
 /**
  * Sensor tag visualizer component
@@ -38,10 +40,10 @@ export default class extends HTMLElement {
     };
 
     /**
-     * on sensortag update
+     * on sensor update
      * @param data
      */
-    onSensorTagUpdate(eventtype, data) {
+    onSensorUpdate(eventtype, data) {
         for (var c = 0; c < this._sensors.length; c++) {
             if (data.sensors[this._sensors[c]]) {
                 if (data.sensors[this._sensors[c]].active) {
@@ -79,6 +81,9 @@ export default class extends HTMLElement {
                     }
                 } else {
                     var axis = ['x', 'y', 'z'];
+                    if (this._sensors[c] === 'gyroscope') {
+                        axis = ['alpha', 'beta', 'gamma'];
+                    }
                     for (var d = 0; d < axis.length; d++ ) {
                         var val = parseFloat(data.sensors[this._sensors[c]][axis[d]]);
                         this.dom.panels[this._sensors[c]][axis[d]].bar.style.width = Math.abs(val * multiplier) + 'px';
@@ -91,18 +96,42 @@ export default class extends HTMLElement {
         }
     }
 
+
     /**
      * connect to sensortag
      */
-    connect(tag, simulate) {
-        if (!tag) {
-            this.sensorTag = new TISensorTag();
+    connect(sensor) {
+        if (sensor) {
+            this._sensor = sensor;
         } else {
-            this.sensorTag = tag;
-        }
+            switch (this._sensorType) {
+                case 'simulator':
+                    if (this._sampleData) {
+                        var xobj = new XMLHttpRequest();
+                        xobj.open('GET', this._sampleData, true);
+                        xobj.onreadystatechange = () => {
+                            if (xobj.readyState == 4 && xobj.status == '200') {
+                                this._sensor = new Simulator(JSON.parse(xobj.responseText).samples);
+                                this._sensor.connect( (eventtype, data) => this.onSensorUpdate(eventtype, data));
+                            }
+                        };
+                        xobj.send(null);
+                    } else {
+                        throw new Error('Simulator requires using sampledata parameter to pass in a URI with samples');
+                    }
+                    break;
 
-        this._simulate = simulate || this.simulate;
-        this.sensorTag.connect( (eventtype, data) => this.onSensorTagUpdate(eventtype, data), this._simulate);
+                case 'laptop':
+                    this._sensor = new Laptop();
+                    this._sensor.connect( (eventtype, data) => this.onSensorUpdate(eventtype, data));
+                    break;
+
+                case 'tisensortag':
+                    this._sensor = new TISensorTag();
+                    this._sensor.connect( (eventtype, data) => this.onSensorUpdate(eventtype, data));
+                    break;
+            }
+        }
     }
 
     /**
@@ -110,10 +139,26 @@ export default class extends HTMLElement {
      * @private
      */
     parseAttributes() {
-        if (this.hasAttribute('simulate')) {
-            this._simulate = true;
-        } else {
-            this._simulate = false;
+        if (this.hasAttribute('sensor')) {
+            this._sensorType = this.getAttribute('sensor');
+        }
+
+        if (this.hasAttribute('sampledata')) {
+            this._sampleData = this.getAttribute('sampledata');
+        }
+    };
+
+    /**
+     * parse attributes on element
+     * @private
+     */
+    parseAttributes() {
+        if (this.hasAttribute('sensor')) {
+            this._sensorType = this.getAttribute('sensor');
+        }
+
+        if (this.hasAttribute('sampledata')) {
+            this._sampleData = this.getAttribute('sampledata');
         }
 
         if (this.hasAttribute('sensors')) {
@@ -158,16 +203,20 @@ export default class extends HTMLElement {
                 default:
                     paneltemplate = this.owner.querySelector('template#sensor');
                     panelclone = paneltemplate.content.cloneNode(true);
+                    var axis = ['x', 'y', 'z'];
+                    if (this._sensors[c] === 'gyroscope') {
+                        axis = ['alpha', 'beta', 'gamma'];
+                    }
                     this.dom.panels[this._sensors[c]] = {};
-                    this.dom.panels[this._sensors[c]].x = {};
-                    this.dom.panels[this._sensors[c]].x.label = panelclone.querySelector('.x.label .value');
-                    this.dom.panels[this._sensors[c]].x.bar = panelclone.querySelector('.x.bar');
-                    this.dom.panels[this._sensors[c]].y = {};
-                    this.dom.panels[this._sensors[c]].y.label = panelclone.querySelector('.y.label .value');
-                    this.dom.panels[this._sensors[c]].y.bar = panelclone.querySelector('.y.bar');
-                    this.dom.panels[this._sensors[c]].z = {};
-                    this.dom.panels[this._sensors[c]].z.label = panelclone.querySelector('.z.label .value');
-                    this.dom.panels[this._sensors[c]].z.bar = panelclone.querySelector('.z.bar');
+                    this.dom.panels[this._sensors[c]][axis[0]] = {};
+                    this.dom.panels[this._sensors[c]][axis[0]].label = panelclone.querySelector('.x.label .value');
+                    this.dom.panels[this._sensors[c]][axis[0]].bar = panelclone.querySelector('.x.bar');
+                    this.dom.panels[this._sensors[c]][axis[1]] = {};
+                    this.dom.panels[this._sensors[c]][axis[1]].label = panelclone.querySelector('.y.label .value');
+                    this.dom.panels[this._sensors[c]][axis[1]].bar = panelclone.querySelector('.y.bar');
+                    this.dom.panels[this._sensors[c]][axis[2]]= {};
+                    this.dom.panels[this._sensors[c]][axis[2]].label = panelclone.querySelector('.z.label .value');
+                    this.dom.panels[this._sensors[c]][axis[2]].bar = panelclone.querySelector('.z.bar');
             }
 
             panelclone.querySelector('.header').innerText = this._sensors[c];
