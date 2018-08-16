@@ -26,7 +26,9 @@ export default class {
      * @param cb callback
      */
     connect(cb) {
-        this._eventListeners.push(cb);
+        if (cb) {
+            this._eventListeners.push(cb);
+        }
         if (this._connected) { return; }
     }
 

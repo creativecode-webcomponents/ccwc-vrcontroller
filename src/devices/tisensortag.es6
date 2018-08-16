@@ -47,9 +47,9 @@ export default class extends Device {
      * @param cb callback
      */
     connect(cb) {
-        this._eventListeners.push(cb);
+        super.connect(cb);
         if (this._connected) { return; }
-        this.connected = true;
+        this._connected = true;
 
         if (!navigator.bluetooth) {
             console.log('no bluetooth support in your browser, trying websockets from a local node server');
@@ -57,8 +57,11 @@ export default class extends Device {
             this.socket.onerror = function (error) { console.log('WebSocket Error ' + error); };
 
             this.socket.onmessage = (e) => {
-                var msg = JSON.parse(e.data);
-                this.update(msg);
+                var data = JSON.parse(e.data);
+                if (data.sensors.accelerometer.active && data.sensors.gyroscope.active) {
+                    data.sensors = this.normalizeSensors(data.sensors);
+                    this.update(data);
+                }
             };
 
             this.socket.onopen = (e) => {
@@ -85,6 +88,32 @@ export default class extends Device {
                 })
                 .catch(error => this.onDeviceError(error));
         }
+    }
+
+    /**
+     * tweak sensor data to align with other sensors better (like from a laptop)
+     * @param sensordata
+     */
+    normalizeSensors(sensordata) {
+        if (sensordata.gyroscope) {
+            // x and z readings are swapped
+            sensordata.gyroscope.alpha = -sensordata.gyroscope.gamma / (65536 / 500) + 1.45; // no motion produces ~ -1.45 reading...cancel it
+            sensordata.gyroscope.beta = -sensordata.gyroscope.beta / (65536 / 500) + 2.0; // no motion produces ~ -2.0 reading...cancel it
+            sensordata.gyroscope.gamma = -sensordata.gyroscope.alpha / (65536 / 500);
+        }
+
+        if (sensordata.accelerometer) {
+            // YES we are flipping Y and z. Seeing values flipped in practice for
+            // natural feel holding of sensortag - I think they intend it to sit on its base vertically
+            // but when holding it, you'd lay it down in your hand allowing your thumb to hit the buttons
+            var z = sensordata.accelerometer.z / 16 * 9.81;
+            var y = sensordata.accelerometer.y / 16 * 9.81;
+            var x = sensordata.accelerometer.x / 16 * 9.81;
+            sensordata.accelerometer.x = x;
+            sensordata.accelerometer.y = y;
+            sensordata.accelerometer.z = z;
+        }
+        return sensordata;
     }
 
     /**

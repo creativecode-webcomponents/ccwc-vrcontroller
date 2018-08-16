@@ -103,6 +103,7 @@ export default class extends HTMLElement {
     connect(sensor) {
         if (sensor) {
             this._sensor = sensor;
+            this._sensor.connect((eventtype, data) => this.onSensorUpdate(eventtype, data));
         } else {
             switch (this._sensorType) {
                 case 'simulator':

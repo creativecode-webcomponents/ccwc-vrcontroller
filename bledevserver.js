@@ -12,7 +12,7 @@ var recording = [];
 var fs = require('fs');
 var record = false;
 var autoconnect = false;
-var pollinginterval = 100;
+var pollinginterval = 30;
 var dataHasChanged = false;
 
 process.argv.forEach(function (val, index, array) {
@@ -83,30 +83,27 @@ function connect() {
             },
             function(callback) {
                 controllerData.connected = true;
-                controllerData.sensors.accelerometer = {};
-                controllerData.sensors.accelerometer.enabled = true;
+                controllerData.sensors.accelerometer = { active: true, enabled: true, x: 0, y: 0, z: 0 };
                 dataHasChanged = true;
-                setTimeout(callback, 2000);
+                setTimeout(callback, 200);
             },
             function(callback) {
                 console.log('enable magnetometer');
                 sensorTag.enableMagnetometer(callback);
             },
             function(callback) {
-                controllerData.sensors.magnetometer = {};
-                controllerData.sensors.magnetometer.enabled = true;
+                controllerData.sensors.magnetometer = { active: true, enabled: true, alpha: 0, beta: 0, gamma: 0 };
                 dataHasChanged = true;
-                setTimeout(callback, 2000);
+                setTimeout(callback, 200);
             },
             function(callback) {
                 sensorTag.enableGyroscope(callback);
             },
             function(callback) {
                 console.log('enable gyroscope');
-                controllerData.sensors.gyroscope = {};
-                controllerData.sensors.gyroscope.enabled = true;
+                controllerData.sensors.gyroscope = { active: true, enabled: true, alpha: 0, beta: 0, gamma: 0 };
                 dataHasChanged = true;
-                setTimeout(callback, 2000);
+                setTimeout(callback, 200);
             },
             function(callback) {
                 controllerData.sensors.buttons = {};
@@ -127,19 +124,19 @@ function connect() {
                 });
 
                 sensorTag.on('accelerometerChange', function(x, y, z) {
-                    controllerData.sensors.accelerometer.x = x.toFixed(1);
-                    controllerData.sensors.accelerometer.y = y.toFixed(1);
-                    controllerData.sensors.accelerometer.z = z.toFixed(1);
+                    controllerData.sensors.accelerometer.x = parseFloat(x.toFixed(4));
+                    controllerData.sensors.accelerometer.y = parseFloat(z.toFixed(4));
+                    controllerData.sensors.accelerometer.z = parseFloat(y.toFixed(4)); // swap y and z for holding in hand
                     dataHasChanged = true;
                 });
 
                 console.log('setAccelerometerPeriod');
-                sensorTag.setAccelerometerPeriod(200, function(error) {
+                sensorTag.setAccelerometerPeriod(pollinginterval, function(error) {
                     handleError(error);
                     sensorTag.notifyAccelerometer(function(error) {
                         console.log('notify accelerometer');
                         handleError(error);
-                        controllerData.sensors.accelerometer.active = true;
+                        controllerData.sensors.gyroscope = { active: true, enabled: true, alpha: 0, beta: 0, gamma: 0 };
                         dataHasChanged = true;
                     });
                 });
@@ -161,9 +158,9 @@ function connect() {
                 });
 
                 sensorTag.on('gyroscopeChange', function(x, y, z) {
-                    controllerData.sensors.gyroscope.alpha = x.toFixed(1);
-                    controllerData.sensors.gyroscope.beta = y.toFixed(1);
-                    controllerData.sensors.gyroscope.gamma = z.toFixed(1);
+                    controllerData.sensors.gyroscope.alpha = parseFloat(z.toFixed(1));
+                    controllerData.sensors.gyroscope.beta = parseFloat(x.toFixed(1));
+                    controllerData.sensors.gyroscope.gamma = parseFloat(y.toFixed(1));
                     dataHasChanged = true;
                 });
 
@@ -220,7 +217,6 @@ function sendSensorTagUpdate() {
     controllerData.sensors.interval = pollinginterval;
     var timestamp = Date.now();
     controllerData.sensors.timestamp = timestamp;
-    var lasttime = timestamp;
 
     if (controllerData.sensors.accelerometer && controllerData.sensors.gyroscope && record) {
         recording.push(JSON.parse(JSON.stringify(controllerData.sensors)));

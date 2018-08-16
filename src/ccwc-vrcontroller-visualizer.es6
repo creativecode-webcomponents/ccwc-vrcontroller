@@ -71,6 +71,7 @@ export default class extends HTMLElement {
     connect(sensor) {
         if (sensor) {
             this._sensor = sensor;
+            this._sensor.connect((eventtype, data) => this.onSensorUpdate(eventtype, data));
         } else {
             switch (this._sensorType) {
                 case 'simulator':
@@ -97,12 +98,6 @@ export default class extends HTMLElement {
                 case 'tisensortag':
                     this._sensor = new TISensorTag();
                     this._sensor.connect( (eventtype, data) => this.onSensorUpdate(eventtype, data));
-                    break;
-
-                case 'webvr':
-                    navigator.getVRDisplays().then( displays => {
-                        this.display = displays[0];
-                    });
                     break;
             }
         }
